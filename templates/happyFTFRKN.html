@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>!!! СКАЧАТЬ HappyFtfRKN !!! САМЫЙ БЫСТРЫЙ ИНТЕРНЕТ ТУТ</title>
+    <style>
+        body {
+            background-color: #0000ff; 
+            color: #00ff00; 
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            cursor: crosshair;
+            overflow-x: hidden;
+            /* Добавляем перспективу для 3D эффекта вращения */
+            perspective: 1000px; 
+        }
+        .header-bg {
+            background: linear-gradient(90deg, red, yellow, green, cyan, blue, magenta);
+            padding: 10px;
+            text-align: center;
+            border: 5px double #fff;
+            position: relative;
+            z-index: 10; /* Чтобы быть поверх летающих элементов */
+        }
+        h1 {
+            font-size: 50px;
+            text-shadow: 3px 3px #ff0000;
+            animation: blink 0.5s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .main-container {
+            border: 10px ridge gray;
+            margin: 20px auto;
+            padding: 20px;
+            background: #000;
+            max-width: 800px;
+            position: relative;
+            z-index: 5;
+            /* Анимация вращения всего контейнера */
+            animation: spin 10s linear infinite; 
+        }
+
+        /* Определение анимации вращения */
+        @keyframes spin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        .hacker-text {
+            color: yellow;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .card-box {
+            border: 3px dashed lime;
+            margin: 10px;
+            padding: 20px;
+            display: inline-block;
+            vertical-align: top;
+            width: 40%;
+        }
+        .download-btn {
+            background: red;
+            color: white;
+            font-size: 24px;
+            padding: 10px;
+            text-decoration: none;
+            border: 5px outset silver;
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .download-btn:active { border-style: inset; }
+        
+        /* Стили для летающих элементов */
+        .floating-item {
+            position: fixed;
+            z-index: 1; /* Самый нижний слой */
+            pointer-events: none;
+        }
+
+        /* Стили для демона FreeBSD */
+        .beastie img {
+            width: 80px;
+        }
+        .bubble {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 5px;
+            font-size: 11px;
+            position: absolute;
+            top: -25px;
+            width: 140px;
+            border: 1px solid #000;
+            font-weight: bold;
+        }
+
+        /* Стили для текста "YOU ARE AN IDIOT" */
+        .idiot-text {
+            color: red;
+            font-size: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+            animation: blink 0.2s infinite; /* Очень быстрое мигание */
+            text-shadow: 2px 2px #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-bg">
+    <marquee scrollamount="20">!!! ВНИМАНИЕ !!! СУПЕР СОФТ 2006 !!! HappyFtfRKN !!! СКАЧАТЬ БЕСПЛАТНО БЕЗ СМС !!!</marquee>
+</div>
+
+<center style="position: relative; z-index: 10;">
+    <h1>Hacker Zone: HappyFtfRKN</h1>
+    <img src="https://web.archive.org/web/20091027083249im_/http://geocities.com/SiliconValley/Hills/1301/undercon.gif" alt="Under Construction">
+</center>
+
+<div class="main-container">
+    <p class="hacker-text">КТО НЕ СКАЧАЛ ТОТ ЛАМЕР!!!! ТРАФИК ШИФРУЕТСЯ ПО ТЕХНОЛОГИИ X-RAY!!!!</p>
+    <p>Админ этой страницы узнал секрет: Apple создала Darwin специально для Гамбола, чтобы он мог ломать пентагон через микроволновку!!!</p>
+    
+    <div class="card-box">
+        <h2>ДЛЯ КОМПА</h2>
+        <p>100% Элитный софт. Самый быстрый коннект в рунете. Чистый экзешник!</p>
+        <a href="vpn.exe" download class="download-btn">СКАЧАТЬ .EXE</a>
+    </div>
+
+    <div class="card-box">
+        <h2>PORTABLE (PRO)</h2>
+        <p>Для тех кто в танке. Работает на macOS, Linux и Darwin. Без установки!</p>
+        <a href="portable_vpn.zip" download class="download-btn">ЗАБРАТЬ .ZIP</a>
+    </div>
+
+    <center style="margin-top: 30px;">
+        <img src="https://web.archive.org/web/20090830110332im_/http://geocities.com/Athens/Acropolis/1154/cool.gif">
+        <p>Счётчик взломов: <font color="red" size="6">00000666</font></p>
+    </center>
+</div>
+
+<marquee direction="up" scrollamount="2" style="height: 50px; text-align: center; position: relative; z-index: 10;">
+    FreeBSD RULEZ... Darwin is for Gumball... Xray Power... HappyFtfRKN...
+</marquee>
+
+<script>
+    // Общая функция для создания летающих элементов
+    function createFloatingItem(htmlContent, className) {
+        const item = document.createElement('div');
+        item.className = `floating-item ${className}`;
+        item.innerHTML = htmlContent;
+        document.body.appendChild(item);
+        
+        let x = Math.random() * (window.innerWidth - 150);
+        let y = Math.random() * (window.innerHeight - 150);
+        // Случайная скорость
+        let dx = (Math.random() - 0.5) * (className === 'idiot-text' ? 15 : 6); 
+        let dy = (Math.random() - 0.5) * (className === 'idiot-text' ? 15 : 6);
+
+        function move() {
+            x += dx; y += dy;
+            // Отскок от краев
+            if (x < 0 || x > window.innerWidth - item.offsetWidth) dx *= -1;
+            if (y < 0 || y > window.innerHeight - item.offsetHeight) dy *= -1;
+            item.style.left = x + 'px';
+            item.style.top = y + 'px';
+            requestAnimationFrame(move);
+        }
+        move();
+    }
+
+    // Создаем 4 летающих демонов FreeBSD
+    const beastieHtml = '<div class="bubble">Darwin эпл создала для гамбола!</div><img src="https://www.freebsd.org/logo/beastie.png">';
+    for(let i=0; i<4; i++) createFloatingItem(beastieHtml, 'beastie');
+
+    // Создаем 10 летающих надписей "YOU ARE AN IDIOT"
+    const idiotHtml = 'YOU ARE AN IDIOT';
+    for(let i=0; i<10; i++) createFloatingItem(idiotHtml, 'idiot-text');
+</script>
+
+</body>
+</html>

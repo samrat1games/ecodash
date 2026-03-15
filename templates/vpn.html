@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRKN.vpn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #000;
+            color: #f5f5f7;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+        .apple-gradient {
+            background: linear-gradient(180deg, #fff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background: #161617;
+            border-radius: 28px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card:hover { transform: scale(1.02); }
+        
+        /* Стили для кастомного селектора */
+        .lang-menu {
+            appearance: none;
+            background: transparent;
+            color: #86868b;
+            font-size: 13px;
+            border: none;
+            padding-right: 20px;
+            cursor: pointer;
+            outline: none;
+        }
+        .lang-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 4px; top: 50%;
+            transform: translateY(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #86868b;
+            pointer-events: none;
+        }
+
+        /* --- Анимация перехода (Синий экран) --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: #0071e3; /* Фирменный синий Apple */
+            z-index: 9999;
+            transition: right 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        .slide-active #transition-overlay {
+            right: 0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="max-w-6xl mx-auto px-10 py-8 flex justify-between items-center">
+        <div class="font-bold text-xl tracking-tighter">FRKN</div>
+        <div class="relative lang-wrapper">
+            <select class="lang-menu" id="langSelector">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="de">Deutsch</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12 text-center">
+        <h1 id="mainTitle" class="text-7xl md:text-9xl font-black mb-8 apple-gradient tracking-tighter">
+            FRKN.vpn
+        </h1>
+        <p id="subTitle" class="text-gray-400 text-xl md:text-2xl mb-16 font-light max-w-2xl mx-auto leading-relaxed">
+            На базе Xray. Одна кнопка до свободы.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card p-10">
+                <div class="mb-8 opacity-90">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M0 3.449L9.75 2.1V11.4H0V3.449zm0 17.1L9.75 21.9V12.6H0v7.949zM10.875 1.875L24 0v11.4H10.875V1.875zm0 20.25V12.6H24v11.4l-13.125-1.875z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-6">Windows</h3>
+                <a href="vpn.exe" download id="btnWin" class="w-full bg-white text-black py-4 rounded-full font-bold hover:bg-gray-200 transition-all active:scale-95">
+                    Скачать .exe
+                </a>
+            </div>
+
+            <div class="card p-10">
+                <div class="flex space-x-4 mb-8 opacity-90">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M17.057 12.781c.032 2.588 2.246 3.469 2.276 3.484-.021.07-.354 1.214-1.155 2.392-.693 1.019-1.412 2.034-2.538 2.054-1.106.02-1.462-.668-2.727-.668-1.265 0-1.658.648-2.707.688-1.089.04-1.921-.107-2.617-1.121-1.428-2.074-2.514-5.857-1.036-8.432.733-1.277 2.033-2.088 3.435-2.108 1.066-.02 2.072.718 2.727.718.654 0 1.889-.893 3.16-.763 1.13.047 2.221.571 2.91 1.54-.082.051-1.748 1.026-1.73 3.214zm-1.85-8.807c.607-.741 1.013-1.768.9-2.793-.873.035-1.93.585-2.556 1.32-.562.651-1.054 1.703-.923 2.705.972.075 1.97-.488 2.579-1.232z"/></svg>
+                    <div class="w-[1px] h-10 bg-gray-800 self-center"></div>
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="white"><path d="M12 2c-.967 0-1.714.735-1.75 1.637-.027.653.28 1.18.73 1.48.33.22.61.32.84.42.31.13.56.32.74.58.18.26.27.56.27.88 0 .42-.17.84-.46 1.17-.29.33-.7.56-1.15.65-1.01.2-1.99.73-2.68 1.48-.69.75-1.06 1.74-1.06 2.79 0 1.32.58 2.52 1.51 3.32.93.8 2.18 1.18 3.48 1.18 1.3 0 2.55-.38 3.48-1.18.93-.8 1.51-2 1.51-3.32 0-1.05-.37-2.04-1.06-2.79-.69-.75-1.67-1.28-2.68-1.48-.45-.09-.86-.32-1.15-.65-.29-.33-.46-.75-.46-1.17 0-.32.09-.62.27-.88.18-.26.43-.45.74-.58.23-.1.51-.2.84-.42.45-.3.757-.827.73-1.48C13.714 2.735 12.967 2 12 2z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Portable</h3>
+                <p class="text-gray-500 mb-6 text-sm">Windows & Linux</p>
+                <a href="portable_vpn.zip" download id="btnPort" class="w-full border-2 border-white text-white py-4 rounded-full font-bold hover:bg-white hover:text-black transition-all">
+                    Скачать файл
+                </a>
+            </div>
+
+            <div class="card p-10">
+                <div class="mb-8 opacity-90">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="white"><path d="M12 2L1 21h22L12 2zm0 3.45l8.03 13.55H3.97L12 5.45zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Darwin / Unix</h3>
+                <p class="text-gray-500 mb-6 text-sm">Advanced Setup</p>
+                <button id="btnDarwin" class="w-full border-2 border-blue-500 text-blue-500 py-4 rounded-full font-bold hover:bg-blue-500 hover:text-white transition-all">
+                    Перейти к установке
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="transition-overlay"></div>
+
+    <script>
+        const translations = {
+            ru: { sub: "На базе Xray. Одна кнопка до свободы.", win: "Скачать .exe", port: "Скачать файл", dar: "Перейти к установке" },
+            en: { sub: "Based on Xray. One click to freedom.", win: "Download .exe", port: "Download file", dar: "Go to setup" },
+            zh: { sub: "基于 Xray。一键开启自由。", win: "下载 .exe", port: "下载文件", dar: "前往设置" },
+            de: { sub: "Basiert auf Xray. Ein Klick zur Freiheit.", win: "Laden .exe", port: "Datei laden", dar: "Zur Einrichtung" },
+            es: { sub: "Basado en Xray. Un clic hacia la libertad.", win: "Descargar .exe", port: "Descargar archivo", dar: "Ir a configuración" }
+        };
+
+        const langSelector = document.getElementById('langSelector');
+        const btnDarwin = document.getElementById('btnDarwin');
+
+        langSelector.addEventListener('change', function() {
+            const lang = this.value;
+            if(translations[lang]) {
+                document.getElementById('subTitle').innerText = translations[lang].sub;
+                document.getElementById('btnWin').innerText = translations[lang].win;
+                document.getElementById('btnPort').innerText = translations[lang].port;
+                btnDarwin.innerText = translations[lang].dar;
+            }
+        });
+
+        // Логика перехода
+        btnDarwin.addEventListener('click', function() {
+            document.body.classList.add('slide-active');
+            
+            setTimeout(() => {
+                window.location.href = 'happyFTFRKN.html';
+            }, 600); // Время должно совпадать с CSS transition
+        });
+    </script>
+</body>
+</html>

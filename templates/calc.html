@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Multi-lang Calorie Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #ccccff; font-family: verdana; }
+        .col { 
+            margin: 30px auto; border-radius: 20px; background-color: #9999ff; 
+            width: 380px; padding: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+        input[type="text"] { margin: 5px 0; width: 100px; }
+        span { font-size: 14px; }
+        select { margin-bottom: 20px; padding: 5px; border-radius: 5px; width: 100%; }
+        .row { margin-bottom: 10px; }
+        .credits { margin-top: 20px; font-size: 11px; border-top: 1px solid #7777ff; padding-top: 10px; line-height: 1.6; }
+        .credits a { color: #333; text-decoration: none; font-weight: bold; }
+        .credits a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="col">
+    <select id="langSelect">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="ar">العربية</option>
+        <option value="uk">Українська</option>
+        <option value="zh">中文</option>
+        <option value="be">Беларуская</option>
+        <option value="kk">Қазақша</option>
+        <option value="hi">हिन्दी</option>
+        <option value="de">Deutsch</option>
+    </select>
+
+    <p id="label-title">Are you wondering how many calories in the day?</p>
+    
+    <div class="row">
+        <input type="radio" id="one" name="radkn"> <span id="label-male">Man</span>
+        <input type="radio" id="two" name="radkn"> <span id="label-female">Woman</span> 
+    </div>
+    
+    <input type="text" id="ves" placeholder="kg"> <span id="label-weight">Your weight (kg)</span><br/>
+    <input type="text" id="rost" placeholder="cm"> <span id="label-height">Your height (cm)</span><br>
+    <input type="text" id="age" placeholder="years"> <span id="label-age">Your age</span><br><br>
+    
+    <input type="button" id="but" value="count">
+    <input type="button" id="but2" value="clear"> 
+    <br><br>
+    
+    <input type="text" id="result" style="width: 250px" readonly>
+
+    <div class="credits">
+        <span id="label-created">Project created by</span> 
+        <a href="https://www.cyberforum.ru/members/1841832.html" target="_blank">Zloyalex100</a><br>
+        <span id="label-trans">Translation</span>: 
+        <a href="https://gemini.google.com" target="_blank">Gemini</a>
+    </div>
+</div>
+
+<script>
+    const i18n = {
+        en: { title: "How many calories?", male: "Man", female: "Woman", weight: "Weight (kg)", height: "Height (cm)", age: "Age", count: "Count", clear: "Clear", errorFill: "Fill all fields", errorNum: "Not a number", errorGender: "Select gender", res: "kcal per day", created: "Project created by", trans: "Translation" },
+        ru: { title: "Сколько калорий в день?", male: "Мужчина", female: "Женщина", weight: "Вес (кг)", height: "Рост (см)", age: "Возраст", count: "Считать", clear: "Очистить", errorFill: "Заполните поля", errorNum: "Это не число", errorGender: "Выберите пол", res: "ккал в день", created: "Проект создал", trans: "Перевод" },
+        ar: { title: "كم سعرة حرارية؟", male: "رجل", female: "امرأة", weight: "الوزن", height: "الطول", age: "العمر", count: "احسب", clear: "مسح", errorFill: "املأ الحقول", errorNum: "ليس رقماً", errorGender: "اختر الجنس", res: "سعرة في اليوم", created: "تم إنشاء المشروع بواسطة", trans: "ترجمة" },
+        uk: { title: "Скільки калорій?", male: "Чоловік", female: "Жінка", weight: "Вага (кг)", height: "Зріст (см)", age: "Вік", count: "Рахувати", clear: "Очистити", errorFill: "Заповніть поля", errorNum: "Це не число", errorGender: "Оберіть стать", res: "ккал на день", created: "Проєкт створив", trans: "Переклад" },
+        zh: { title: "每天需要多少热量？", male: "男", female: "女", weight: "体重 (kg)", height: "身高 (cm)", age: "年龄", count: "计算", clear: "清除", errorFill: "请填写所有字段", errorNum: "不是数字", errorGender: "请选择性别", res: "千卡/天", created: "项目创建者", trans: "翻译" },
+        be: { title: "Колькі калорый?", male: "Мужчына", female: "Жанчына", weight: "Вага (кг)", height: "Рост (см)", age: "Узрост", count: "Лічыць", clear: "Ачысціць", errorFill: "Запоўніце палі", errorNum: "Гэта не лічба", errorGender: "Абярыце пол", res: "ккал у дзень", created: "Праект стварыў", trans: "Пераклад" },
+        kk: { title: "Тәуліктік калория?", male: "Ер", female: "Әйел", weight: "Салмағы (кг)", height: "Бойы (см)", age: "Жасы", count: "Есептеу", clear: "Тазалау", errorFill: "Толықтырыңыз", errorNum: "Бұл сан емес", errorGender: "Жынысты таңдаңыз", res: "ккал/тәулік", created: "Жобаны жасаған", trans: "Аудару" },
+        hi: { title: "कितनी कैलोरी?", male: "पुरुष", female: "महिला", weight: "वजन (किग्रा)", height: "लंबाई (सेमी)", age: "आयु", count: "गणना करें", clear: "साफ करें", errorFill: "सभी भरें", errorNum: "संख्या नहीं है", errorGender: "लिंग चुनें", res: "किलोकैलोरी प्रति दिन", created: "परियोजना निर्माता", trans: "अनुवाद" },
+        de: { title: "Kalorienbedarf?", male: "Mann", female: "Frau", weight: "Gewicht (kg)", height: "Größe (cm)", age: "Alter", count: "Berechnen", clear: "Löschen", errorFill: "Felder ausfüllen", errorNum: "Keine Zahl", errorGender: "Geschlecht wählen", res: "kcal pro Tag", created: "Projekt erstellt von", trans: "Übersetzung" }
+    };
+
+    const elements = {
+        title: document.getElementById('label-title'), male: document.getElementById('label-male'),
+        female: document.getElementById('label-female'), weight: document.getElementById('label-weight'),
+        height: document.getElementById('label-height'), age: document.getElementById('label-age'),
+        but: document.getElementById('but'), but2: document.getElementById('but2'),
+        lang: document.getElementById('langSelect'), res: document.getElementById('result'),
+        ves: document.getElementById('ves'), rost: document.getElementById('rost'), 
+        ageInp: document.getElementById('age'), mRad: document.getElementById('one'), fRad: document.getElementById('two'),
+        created: document.getElementById('label-created'), trans: document.getElementById('label-trans')
+    };
+
+    function updateLang() {
+        const l = i18n[elements.lang.value];
+        elements.title.innerText = l.title;
+        elements.male.innerText = l.male;
+        elements.female.innerText = l.female;
+        elements.weight.innerText = l.weight;
+        elements.height.innerText = l.height;
+        elements.age.innerText = l.age;
+        elements.but.value = l.count;
+        elements.but2.value = l.clear;
+        elements.created.innerText = l.created;
+        elements.trans.innerText = l.trans;
+        document.body.dir = elements.lang.value === 'ar' ? 'rtl' : 'ltr';
+    }
+
+    elements.lang.onchange = updateLang;
+
+    elements.but.onclick = function () {
+        const l = i18n[elements.lang.value];
+        if (!elements.mRad.checked && !elements.fRad.checked) return alert(l.errorGender);
+        if (!elements.ves.value || !elements.rost.value || !elements.ageInp.value) return elements.res.value = l.errorFill;
+        if (isNaN(elements.ves.value) || isNaN(elements.rost.value) || isNaN(elements.ageInp.value)) return elements.res.value = l.errorNum;
+
+        let w = parseFloat(elements.ves.value), h = parseFloat(elements.rost.value), a = parseInt(elements.ageInp.value);
+        let bmr = (10 * w) + (6.25 * h) - (5 * a) + (elements.mRad.checked ? 5 : -161);
+        elements.res.value = Math.round(bmr) + " " + l.res;
+    };
+
+    elements.but2.onclick = () => { ['ves','rost','ageInp','res'].forEach(k=>elements[k].value=''); elements.mRad.checked = elements.fRad.checked = false; };
+</script>
+</body>
+</html>
