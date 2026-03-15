@@ -17,13 +17,3 @@
     Запустите приложение:
   ```bash
     python main.py
-
-```bash
-### Как это сохранить:
-1. Создай файл `README.md` в корне папки.
-2. Вставь код выше.
-3. Отправь в GitHub:
-```bash
-git add README.md
-git commit -m "Add readme"
-git push
