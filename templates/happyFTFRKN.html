@@ -2,183 +2,115 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>!!! СКАЧАТЬ HappyFtfRKN !!! САМЫЙ БЫСТРЫЙ ИНТЕРНЕТ ТУТ</title>
+    <title>100 Languages</title>
     <style>
-        body {
-            background-color: #0000ff; 
-            color: #00ff00; 
-            font-family: "Comic Sans MS", cursive, sans-serif;
-            cursor: crosshair;
-            overflow-x: hidden;
-            /* Добавляем перспективу для 3D эффекта вращения */
-            perspective: 1000px; 
-        }
-        .header-bg {
-            background: linear-gradient(90deg, red, yellow, green, cyan, blue, magenta);
-            padding: 10px;
-            text-align: center;
-            border: 5px double #fff;
-            position: relative;
-            z-index: 10; /* Чтобы быть поверх летающих элементов */
-        }
-        h1 {
-            font-size: 50px;
-            text-shadow: 3px 3px #ff0000;
-            animation: blink 0.5s infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-        .main-container {
-            border: 10px ridge gray;
-            margin: 20px auto;
-            padding: 20px;
-            background: #000;
-            max-width: 800px;
-            position: relative;
-            z-index: 5;
-            /* Анимация вращения всего контейнера */
-            animation: spin 10s linear infinite; 
-        }
-
-        /* Определение анимации вращения */
-        @keyframes spin {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(360deg); }
-        }
-
-        .hacker-text {
-            color: yellow;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .card-box {
-            border: 3px dashed lime;
-            margin: 10px;
-            padding: 20px;
-            display: inline-block;
-            vertical-align: top;
-            width: 40%;
-        }
-        .download-btn {
-            background: red;
-            color: white;
-            font-size: 24px;
-            padding: 10px;
-            text-decoration: none;
-            border: 5px outset silver;
-            display: block;
-            margin-top: 10px;
-            text-align: center;
-        }
-        .download-btn:active { border-style: inset; }
-        
-        /* Стили для летающих элементов */
-        .floating-item {
-            position: fixed;
-            z-index: 1; /* Самый нижний слой */
-            pointer-events: none;
-        }
-
-        /* Стили для демона FreeBSD */
-        .beastie img {
-            width: 80px;
-        }
-        .bubble {
-            background: white;
-            color: black;
-            border-radius: 10px;
-            padding: 5px;
-            font-size: 11px;
-            position: absolute;
-            top: -25px;
-            width: 140px;
-            border: 1px solid #000;
-            font-weight: bold;
-        }
-
-        /* Стили для текста "YOU ARE AN IDIOT" */
-        .idiot-text {
-            color: red;
-            font-size: 20px;
-            font-weight: bold;
-            white-space: nowrap;
-            animation: blink 0.2s infinite; /* Очень быстрое мигание */
-            text-shadow: 2px 2px #fff;
-        }
+        body { font-family: sans-serif; line-height: 1.5; padding: 20px; }
+        ol { column-count: 2; } /* Разбить на две колонки для удобства */
+        @media (max-width: 600px) { ol { column-count: 1; } }
     </style>
 </head>
 <body>
-
-<div class="header-bg">
-    <marquee scrollamount="20">!!! ВНИМАНИЕ !!! СУПЕР СОФТ 2006 !!! HappyFtfRKN !!! СКАЧАТЬ БЕСПЛАТНО БЕЗ СМС !!!</marquee>
-</div>
-
-<center style="position: relative; z-index: 10;">
-    <h1>Hacker Zone: HappyFtfRKN</h1>
-    <img src="https://web.archive.org/web/20091027083249im_/http://geocities.com/SiliconValley/Hills/1301/undercon.gif" alt="Under Construction">
-</center>
-
-<div class="main-container">
-    <p class="hacker-text">КТО НЕ СКАЧАЛ ТОТ ЛАМЕР!!!! ТРАФИК ШИФРУЕТСЯ ПО ТЕХНОЛОГИИ X-RAY!!!!</p>
-    <p>Админ этой страницы узнал секрет: Apple создала Darwin специально для Гамбола, чтобы он мог ломать пентагон через микроволновку!!!</p>
-    
-    <div class="card-box">
-        <h2>ДЛЯ КОМПА</h2>
-        <p>100% Элитный софт. Самый быстрый коннект в рунете. Чистый экзешник!</p>
-        <a href="vpn.exe" download class="download-btn">СКАЧАТЬ .EXE</a>
-    </div>
-
-    <div class="card-box">
-        <h2>PORTABLE (PRO)</h2>
-        <p>Для тех кто в танке. Работает на macOS, Linux и Darwin. Без установки!</p>
-        <a href="portable_vpn.zip" download class="download-btn">ЗАБРАТЬ .ZIP</a>
-    </div>
-
-    <center style="margin-top: 30px;">
-        <img src="https://web.archive.org/web/20090830110332im_/http://geocities.com/Athens/Acropolis/1154/cool.gif">
-        <p>Счётчик взломов: <font color="red" size="6">00000666</font></p>
-    </center>
-</div>
-
-<marquee direction="up" scrollamount="2" style="height: 50px; text-align: center; position: relative; z-index: 10;">
-    FreeBSD RULEZ... Darwin is for Gumball... Xray Power... HappyFtfRKN...
-</marquee>
-
-<script>
-    // Общая функция для создания летающих элементов
-    function createFloatingItem(htmlContent, className) {
-        const item = document.createElement('div');
-        item.className = `floating-item ${className}`;
-        item.innerHTML = htmlContent;
-        document.body.appendChild(item);
-        
-        let x = Math.random() * (window.innerWidth - 150);
-        let y = Math.random() * (window.innerHeight - 150);
-        // Случайная скорость
-        let dx = (Math.random() - 0.5) * (className === 'idiot-text' ? 15 : 6); 
-        let dy = (Math.random() - 0.5) * (className === 'idiot-text' ? 15 : 6);
-
-        function move() {
-            x += dx; y += dy;
-            // Отскок от краев
-            if (x < 0 || x > window.innerWidth - item.offsetWidth) dx *= -1;
-            if (y < 0 || y > window.innerHeight - item.offsetHeight) dy *= -1;
-            item.style.left = x + 'px';
-            item.style.top = y + 'px';
-            requestAnimationFrame(move);
-        }
-        move();
-    }
-
-    // Создаем 4 летающих демонов FreeBSD
-    const beastieHtml = '<div class="bubble">Darwin эпл создала для гамбола!</div><img src="https://www.freebsd.org/logo/beastie.png">';
-    for(let i=0; i<4; i++) createFloatingItem(beastieHtml, 'beastie');
-
-    // Создаем 10 летающих надписей "YOU ARE AN IDIOT"
-    const idiotHtml = 'YOU ARE AN IDIOT';
-    for(let i=0; i<10; i++) createFloatingItem(idiotHtml, 'idiot-text');
-</script>
-
+    <ol>
+        <li>Я вообще не умею программировать под unix или darwin (Russian)</li>
+        <li>I don't know how to program for unix or darwin at all (English)</li>
+        <li>Ich kann überhaupt nicht für Unix oder Darwin programmieren (German)</li>
+        <li>Je ne sais pas du tout programmer pour unix ou darwin (French)</li>
+        <li>No sé programar para unix o darwin en absoluto (Spanish)</li>
+        <li>Non so affatto programmare per unix o darwin (Italian)</li>
+        <li>Não sei programar para unix ou darwin de todo (Portuguese)</li>
+        <li>Ik kan helemaal niet programmeren voor unix of darwin (Dutch)</li>
+        <li>Jeg kan slet ikke programmere til unix eller darwin (Danish)</li>
+        <li>Jag kan inte programmera för unix eller darwin alls (Swedish)</li>
+        <li>En osaa ohjelmoida unixille tai darwinille lainkaan (Finnish)</li>
+        <li>Jeg kan overhode ikke programmere for unix eller darwin (Norwegian)</li>
+        <li>W ogóle nie umiem programować pod unixem ani darwinem (Polish)</li>
+        <li>Vůbec neumím programovat pro unix nebo darwin (Czech)</li>
+        <li>Vôbec neviem programovať pre unix alebo darwin (Slovak)</li>
+        <li>Egyáltalán nem tudok unixra vagy darwinra programozni (Hungarian)</li>
+        <li>Nu știu deloc să programez pentru unix sau darwin (Romanian)</li>
+        <li>Uopće ne znam programirati za unix ili darwin (Croatian)</li>
+        <li>Уопште не знам да програмирам за unix или darwin (Serbian)</li>
+        <li>Sploh ne znam programirati za unix ali darwin (Slovenian)</li>
+        <li>Ни най-малко не мога да програмирам за unix или darwin (Bulgarian)</li>
+        <li>Δεν ξέρω καθόλου να προγραμματίζω για unix ή darwin (Greek)</li>
+        <li>Unix veya darwin için programlama yapmayı hiç bilmiyorum (Turkish)</li>
+        <li>Я взагалі не вмію програмувати під unix або darwin (Ukrainian)</li>
+        <li>Я зусім не ўмею праграмаваць пад unix або darwin (Belarusian)</li>
+        <li>Ég kann ekkert að forrita fyrir unix eða darwin (Icelandic)</li>
+        <li>Nílim in ann clárú do unix nó darwin ar chor ar bith (Irish)</li>
+        <li>Никако не знам да програмирам за unix или darwin (Macedonian)</li>
+        <li>Unix-i ose darwin-i nuk di të programoj fare (Albanian)</li>
+        <li>Ma ei oska üldse unixi või darwini jaoks programmeerida (Estonian)</li>
+        <li>Es nemaz neprotu programmēt unix vai darwin vidē (Latvian)</li>
+        <li>Aš visiškai nemoku programuoti unix ar darwin sistemoms (Lithuanian)</li>
+        <li>Unix oswa darwin mwen pa konn kijan pou m pwograme ditou (Haitian Creole)</li>
+        <li>Mwen pa konn pwograme pou unix oswa darwin (Cebuano)</li>
+        <li>Hindi ko alam kung paano mag-program para sa unix o darwin (Tagalog)</li>
+        <li>Saya sama sekali tidak tahu cara memprogram untuk unix atau darwin (Indonesian)</li>
+        <li>Saya langsung tidak tahu cara memprogram untuk unix atau darwin (Malay)</li>
+        <li>Unix hoặc darwin tôi hoàn toàn không biết lập trình (Vietnamese)</li>
+        <li>ฉันเขียนโปรแกรมสำหรับ unix หรือ darwin ไม่เป็นเลย (Thai)</li>
+        <li>ຂ້ອຍບໍ່ຮູ້ວິທີຂຽນໂປຣແກຣມສຳລັບ unix ຫຼື darwin ເລີຍ (Lao)</li>
+        <li>unix ឬ darwin ខ្ញុំមិនចេះសរសេរកម្មវិធីទាល់តែសោះ (Khmer)</li>
+        <li>আমি ইউনিক্স বা ডারউইনের জন্য প্রোগ্রামিং করতে জানি না (Bengali)</li>
+        <li>મને યુનિક્સ કે ડાર્વિન માટે પ્રોગ્રામિંગ કરતા બિલકુલ આવડતું નથી (Gujarati)</li>
+        <li>मुझे यूनिक्स या डार्विन के लिए प्रोग्रामिंग करना बिल्कुल नहीं आता (Hindi)</li>
+        <li>ನನಗೆ ಯುನಿಕ್ಸ್ ಅಥವಾ ಡಾರ್ವಿನ್‌ಗಾಗಿ ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಮಾಡಲು ಬರುವುದಿಲ್ಲ (Kannada)</li>
+        <li>യൂണിക്സിനോ ഡാർവിനോ വേണ്ടി പ്രോഗ്രാം ചെയ്യാൻ എനിക്കറിയില്ല (Malayalam)</li>
+        <li>मला युनिक्स किंवा डार्विनसाठी प्रोग्रामिंग कसे करायचे हे माहित नाही (Marathi)</li>
+        <li>ମୁଁ ୟୁନିକ୍ସ କିମ୍ବା ଡାରୱିନ୍ ପାଇଁ ପ୍ରୋଗ୍ରାମିଂ କରିବା ଜାଣି ନାହିଁ (Odia)</li>
+        <li>ਮੈਨੂੰ ਯੂਨਿਕਸ ਜਾਂ ਡਾਰਵਿਨ ਲਈ ਪ੍ਰੋਗਰਾਮਿੰਗ ਕਰਨੀ ਬਿਲਕੁਲ ਨਹੀਂ ਆਉਂਦੀ (Punjabi)</li>
+        <li>எனக்கு யுனிக்ஸ் அல்லது டார்வினுக்கு நிரல் செய்யத் தெரியாது (Tamil)</li>
+        <li>నాకు యునిక్స్ లేదా డార్విన్ కోసం ప్రోగ్రామింగ్ చేయడం రాదు (Telugu)</li>
+        <li>මම යුනික්ස් හෝ ඩාවින් සඳහා වැඩසටහන් කිරීමට දන්නේ නැත (Sinhala)</li>
+        <li>আমি একেবারেই ইউনিক্স বা ডারউইন প্রোগ্রামিং জানি না (Assamese)</li>
+        <li>යූනික්ස් හෝ ඩාවින් සඳහා ක්‍රමලේඛනය කරන්නේ කෙසේදැයි මම නොදනිමි (Burmese)</li>
+        <li>আমি ইউনিক্স বা ডারউইনের জন্য প্রোগ্রামিং জানি না (Sanskrit)</li>
+        <li>私はunixやdarwin向けのプログラミングが全くできません (Japanese)</li>
+        <li>나는 unix나 darwin을 위한 프로그래밍을 전혀 할 줄 모른다 (Korean)</li>
+        <li>我完全不会编写 unix 或 darwin 程序 (Chinese Simplified)</li>
+        <li>我完全不會編寫 unix 或 darwin 程序 (Chinese Traditional)</li>
+        <li>Би огт unix эсвэл darwin дээр програм бичиж чадахгүй (Mongolian)</li>
+        <li>Men unix yoki darwin uchun dasturlashni umuman bilmayman (Uzbek)</li>
+        <li>Мен unix немесе darwin үшін бағдарламалауды мүлдем білмеймін (Kazakh)</li>
+        <li>Men unix же darwin үчүн программалоону такыр билбейм (Kyrgyz)</li>
+        <li>Ман умуман барои unix ё darwin барномарезӣ карда наметавонам (Tajik)</li>
+        <li>Мен unix яки darwin өчен программалаштыра белмим (Tatar)</li>
+        <li>მე საერთოდ არ ვიცი პროგრამირება unix-ისთვის ან darwin-ისთვის (Georgian)</li>
+        <li>Ես ընդհանրապես չգիտեմ ինչպես ծրագրավորել unix-ի կամ darwin-ի համար (Armenian)</li>
+        <li>Mən unix və ya darwin üçün proqramlaşdırmağı heç bilmirəm (Azerbaijani)</li>
+        <li>אני בכלל לא יודע לתכנת עבור unix או darwin (Hebrew)</li>
+        <li>أنا لا أعرف كيفية البرمجة لـ unix أو darwin على الإطلاق (Arabic)</li>
+        <li>زه هیڅکله د unix یا darwin لپاره پروګرام نشم کولی (Pashto)</li>
+        <li>من اصلاً بلد نیستم برای unix یا darwin برنامه‌نویسی کنم (Persian)</li>
+        <li>Unix ya da darwin üçün proqramlaşdırmağı qətiyyən bacarmıram (Kurdish)</li>
+        <li>Mi ne scias programi por unukso aŭ darvino tute (Esperanto)</li>
+        <li>Unix vel darwin programmare nescio omnino (Latin)</li>
+        <li>Sijui jinsi ya kupanga unix au darwin hata kidogo (Swahili)</li>
+        <li>Emi ko mọ bi a ṣe n ṣatunṣe fun unix tabi darwin rara (Yoruba)</li>
+        <li>Amaghị m otu esi emepụta ihe maka unix ma ọ bụ darwin ma ọlị (Igbo)</li>
+        <li>Ngiyahluleka ukuhlela i-unix noma i-darwin (Zulu)</li>
+        <li>Andazi ukuba kudweliswa njani kwi-unix okanye kwi-darwin (Xhosa)</li>
+        <li>Ke fela ke sa tsebe ho etsa lenaneo la unix kapa darwin (Sesotho)</li>
+        <li>Mina angikwati kuhlela i-unix noma i-darwin (Swati)</li>
+        <li>Ни уопште не умем да програмирам за unix или darwin (Bosnian)</li>
+        <li>Unix pe darwin de programmà no n'ou sai (Corsican)</li>
+        <li>Aš visiškā nemuoku programuotė unix aba darwin (Samogitian)</li>
+        <li>Unix eller darwin kan jag inte programmera alls (Scots Gaelic)</li>
+        <li>Ndi a sa divhi u pprogramela unix kana darwin (Venda)</li>
+        <li>Ndzi nga ka ndzi nga swi koti ku hlelo unix kumbe darwin (Tsonga)</li>
+        <li>Unai unix e darwin la-i-no-na kava-kava (Hiri Motu)</li>
+        <li>Ha maki au i te hōtaka mō te unix, darwin rānei (Maori)</li>
+        <li>E kore au e mōhio ki te hōtaka mō unix, darwin rānei (Cook Islands Maori)</li>
+        <li>Ou te le iloa pe faapefea ona polokalame mo unix po o darwin (Samoan)</li>
+        <li>'Oku 'ikai te u poto he polokalama ki he unix pe ko e darwin (Tongan)</li>
+        <li>Unix pe darwin naku sanin yadda ake shirye-shirye ba (Hausa)</li>
+        <li>Ni danyen sanin yadda ake tsara unix ko darwin ba (Fulani)</li>
+        <li>Mi no save olsem wanem long programim unix o darwin (Tok Pisin)</li>
+        <li>Ua sili atu ona ou le iloa le polokalame unix po o darwin (Tahitian)</li>
+        <li>Ndivo ndisingazivi kuronga unix kana darwin zvachose (Shona)</li>
+        <li>Ga ke itse go dira mananeo a unix kgotsa darwin (Tswana)</li>
+        <li>E ne e se nna ea neng a ka khona ho etsa unix kapa darwin (Southern Sotho)</li>
+    </ol>
 </body>
 </html>

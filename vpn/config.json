@@ -1,0 +1,43 @@
+{
+    "inbounds": [
+        {
+            "port": 10808,
+            "listen": "127.0.0.1",
+            "protocol": "socks",
+            "settings": {
+                "udp": true
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vless",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "84.201.133.58",
+                        "port": 8449,
+                        "users": [
+                            {
+                                "id": "891cea51-b7f2-4bb6-b322-13acf4ad4aaf",
+                                "encryption": "none",
+                                "flow": "xtls-rprx-vision"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "reality",
+                "realitySettings": {
+                    "serverName": "travel.yandex.ru",
+                    "publicKey": "eWc4OGy6tScPuAS_MCVSrFpqJRj1uC9f1gh6YLc332M",
+                    "fingerprint": "chrome",
+                    "shortId": "",
+                    "spiderX": "/"
+                }
+            }
+        }
+    ]
+}
