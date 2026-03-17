@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Carbon Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #dcdcdc; font-family: verdana; }
+        .col { 
+            margin: 30px auto; border-radius: 20px; background-color: #8e8e8e; 
+            width: 380px; padding: 30px; box-shadow: 0 4px 8px rgba(0, 255, 0, 0.1); 
+        }
+        input[type="text"] { margin: 5px 0; width: 100px; }
+        span { font-size: 14px; color: #fff; }
+        select { margin-bottom: 20px; padding: 5px; border-radius: 5px; width: 100%; }
+        .credits { margin-top: 20px; font-size: 11px; border-top: 1px solid #ffffff; padding-top: 10px; line-height: 1.6; color: #eee; }
+        .credits a { color: #ffffff; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="col">
+    <select id="langSelect">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="kk">Қазақша</option>
+    </select>
+
+    <p id="label-title" style="color: white; font-weight: bold;">Check your CO2 footprint</p>
+    
+    <input type="text" id="km" placeholder="km"> <span id="label-km">Car (km/month)</span><br/>
+    <input type="text" id="kwh" placeholder="kWh"> <span id="label-kwh">Electricity (kWh)</span><br>
+    <input type="text" id="fly" placeholder="hours"> <span id="label-fly">Flights (hours/year)</span><br><br>
+    
+    <input type="button" id="but" value="count">
+    <input type="button" id="but2" value="clear"> 
+    <br><br>
+    
+    <input type="text" id="result" style="width: 250px" readonly>
+
+    <div class="credits">
+        <span id="label-created">Project created by</span> 
+        <a href="https://github.com/samrat1games" target="_blank">samrat</a><br>
+        <span id="label-trans">Translation</span>:
+        <a href="https://gemini.google.com" target="_blank">Gemini</a>
+    </div>
+</div>
+
+<script>
+    const i18n = {
+        en: { title: "Check your CO2 footprint", km: "Car (km/month)", kwh: "Electricity (kWh)", fly: "Flights (hours/year)", count: "Count", clear: "Clear", res: "kg CO2 / month", created: "Project created by", trans: "Translation" },
+        ru: { title: "Ваш углеродный след", km: "Авто (км/мес)", kwh: "Свет (кВт⋅ч/мес)", fly: "Полеты (ч/год)", count: "Считать", clear: "Очистить", res: "кг CO2 в месяц", created: "Проект создал", trans: "Перевод" },
+        kk: { title: "Көміртек ізі", km: "Көлік (км/ай)", kwh: "Тоқ (кВт⋅сағ/ай)", fly: "Ұшу (сағат/жыл)", count: "Есептеу", clear: "Тазалау", res: "кг CO2 айына", created: "Жобаны жасаған", trans: "Аудару" }
+    };
+
+    const el = {
+        title: document.getElementById('label-title'),
+        kmL: document.getElementById('label-km'),
+        kwhL: document.getElementById('label-kwh'),
+        flyL: document.getElementById('label-fly'),
+        but: document.getElementById('but'),
+        but2: document.getElementById('but2'),
+        lang: document.getElementById('langSelect'),
+        res: document.getElementById('result'),
+        km: document.getElementById('km'),
+        kwh: document.getElementById('kwh'),
+        fly: document.getElementById('fly'),
+        created: document.getElementById('label-created'),
+        trans: document.getElementById('label-trans')
+    };
+
+    function update() {
+        const l = i18n[el.lang.value];
+        el.title.innerText = l.title;
+        el.kmL.innerText = l.km;
+        el.kwhL.innerText = l.kwh;
+        el.flyL.innerText = l.fly;
+        el.but.value = l.count;
+        el.but2.value = l.clear;
+        el.created.innerText = l.created;
+        el.trans.innerText = l.trans;
+    }
+
+    el.lang.onchange = update;
+
+    el.but.onclick = function() {
+        const l = i18n[el.lang.value];
+        const v1 = parseFloat(el.km.value) || 0;
+        const v2 = parseFloat(el.kwh.value) || 0;
+        const v3 = parseFloat(el.fly.value) || 0;
+
+        const total = (v1 * 0.19) + (v2 * 0.45) + ((v3 * 90) / 12);
+        el.res.value = total.toFixed(1) + " " + l.res;
+    };
+
+    el.but2.onclick = () => {
+        ['km','kwh','fly','res'].forEach(id => el[id].value = '');
+    };
+</script>
+</body>
+</html>

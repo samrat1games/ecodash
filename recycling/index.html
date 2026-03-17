@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sorting Guide</title>
+    <style>
+        body { background-color: #dcdcdc; font-family: verdana; padding: 20px; }
+        .container { max-width: 500px; margin: auto; color: #000; }
+        select { width: 100%; padding: 5px; margin-bottom: 20px; }
+        .content { white-space: pre-wrap; line-height: 1.5; font-size: 14px; }
+        .footer { margin-top: 30px; font-size: 11px; border-top: 1px solid #888; padding-top: 10px; color: #444; }
+        a { color: #000; font-weight: bold; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <select id="lang">
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+        <option value="kk">Қазақша</option>
+    </select>
+
+    <div id="out" class="content"></div>
+
+    <div class="footer">
+        <span id="f-cr"></span> <a href="https://github.com/samrat1games" target="_blank">samrat</a><br>
+        <span id="f-im"></span> <a href="https://www.kodland.org/ru" target="_blank">Kodland</a><br>
+        <span id="f-tr"></span> <a href="https://gemini.google.com" target="_blank">Gemini</a>
+    </div>
+</div>
+
+<script>
+const i18n = {
+ru: {
+    cr: "Проект создал",
+    im: "Идея проекта",
+    tr: "Перевод",
+    text: `🔵 Синий контейнер (Бумага и картон)
+Можно: Газеты, журналы, тетради, картонные коробки, бумажные пакеты.
+Нельзя: Чеки, салфетки, грязная бумага, обои, ламинированная бумага, стаканчики.
+
+🟡 Желтый контейнер (Пластик и металл)
+Пластик: Бутылки PET 1, флаконы HDPE 2, упаковка PP 5. Сплющивайте тару.
+Металл: Алюминиевые и консервные банки, крышки.
+Нельзя: Тюбики, фольга, паучи.
+
+🟢 Зеленый контейнер (Стекло)
+Можно: Бутылки, банки из-под продуктов и лекарств.
+Нельзя: Керамика, фарфор, хрусталь, зеркала, оконное стекло.
+
+🔴 Опасные отходы (В спецпункты)
+Батарейки, градусники, лампы, лекарства, техника.
+
+💡 Лайфхаки:
+Маркировка: Ищите цифры 1, 2, 4, 5.
+Ополаскивание: Смойте остатки еды.
+Крышки: Собирайте отдельно.`
+},
+en: {
+    cr: "Project created by",
+    im: "Project idea",
+    tr: "Translation",
+    text: `🔵 Blue Bin (Paper & Cardboard)
+Yes: Newspapers, magazines, notebooks, boxes, paper bags.
+No: Receipts, napkins, dirty paper, wallpaper, cups.
+
+🟡 Yellow Bin (Plastic & Metal)
+Plastic: PET 1, HDPE 2, PP 5 bottles and containers. Flatten them.
+Metal: Aluminum and tin cans, metal lids.
+No: Tubes, foil, pouches.
+
+🟢 Green Bin (Glass)
+Yes: Food and medicine bottles/jars.
+No: Ceramics, porcelain, crystal, mirrors, window glass.
+
+🔴 Hazardous Waste (Special points)
+Batteries, thermometers, lamps, medicine, electronics.
+
+💡 Lifehacks:
+Marking: Look for numbers 1, 2, 4, 5.
+Rinsing: Rinse off food residues.
+Caps: Collect plastic caps separately.`
+},
+kk: {
+    cr: "Жобаны жасаған",
+    im: "Жоба идеясы",
+    tr: "Аудару",
+    text: `🔵 Көк контейнер (Қағаз және картон)
+Болады: Газеттер, журналдар, дәптерлер, қораптар.
+Болмайды: Чектер, майлықтар, кір қағаз, тұсқағаздар, стақандар.
+
+🟡 Сары контейнер (Пластик және металл)
+Пластик: PET 1, HDPE 2, PP 5 бөтелкелер мен қаптамалар.
+Металл: Қалбырлар, металл қақпақтар.
+Болмайды: Түтікшелер, фольга, паучтар.
+
+🟢 Жасыл контейнер (Шыны)
+Болады: Бөтелкелер, тамақ пен дәрі-дәрмек банкалары.
+Болмайды: Керамика, фарфор, хрусталь, айна, терезе шынысы.
+
+🔴 Қауіпті қалдықтар (Арнайы пункттер)
+Батареялар, термометрлер, шамдар, дәрілер, техника.
+
+💡 Лайфхактар:
+Таңбалау: 1, 2, 4, 5 сандарын іздеңіз.
+Шаю: Тамақ қалдықтарын жуып тастаңыз.
+Қақпақтар: Пластик қақпақтарды бөлек жинаңыз.`
+}
+};
+
+const sel = document.getElementById('lang');
+const out = document.getElementById('out');
+const fCr = document.getElementById('f-cr');
+const fIm = document.getElementById('f-im');
+const fTr = document.getElementById('f-tr');
+
+sel.onchange = () => {
+    const l = i18n[sel.value];
+    out.innerText = l.text;
+    fCr.innerText = l.cr;
+    fIm.innerText = l.im + ":";
+    fTr.innerText = l.tr + ":";
+};
+sel.onchange();
+</script>
+
+</body>
+</html>

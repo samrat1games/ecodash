@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRKN.VPN | EcoDash Desktop Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #22c55e;
+            --vpn-blue: #4a90e2;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 12vw, 10rem);
+            font-weight: 900; font-style: italic; line-height: 0.8;
+            background: linear-gradient(180deg, #fff 0%, #333 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
+        }
+
+        /* --- STICKY DESKTOP ECOSYSTEM --- */
+        .scene-wrapper {
+            height: 400vh;
+            position: relative;
+        }
+
+        .sticky-content {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .devices-group {
+            position: relative;
+            width: 800px; height: 400px;
+            display: flex; justify-content: center; align-items: flex-end;
+            z-index: 10;
+        }
+
+        .pc-device {
+            position: absolute;
+            transition: transform 0.1s linear, opacity 0.2s;
+        }
+
+        /* Ноутбук и Монитор */
+        .laptop-pc { width: 350px; z-index: 3; bottom: 0; left: 50px; }
+        .monitor-pc { width: 400px; z-index: 2; bottom: 20px; right: 50px; }
+
+        /* Контейнер для фото приложения на экране */
+        .screen-content {
+            position: absolute;
+            top: 8%; left: 5%;
+            width: 90%; height: 80%;
+            background-image: url('photo/app.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-radius: 2px;
+        }
+
+        .black-hole {
+            width: 600px; height: 50px;
+            background: radial-gradient(ellipse at center, rgba(34, 197, 94, 0.3) 0%, transparent 75%);
+            border-radius: 50%;
+            margin-top: -10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,1) inset;
+        }
+
+        .vpn-core-text {
+            position: absolute;
+            font-size: 6rem;
+            font-weight: 900; font-style: italic;
+            color: var(--accent);
+            text-shadow: 0 0 50px rgba(34, 197, 94, 0.5);
+            opacity: 0;
+            transform: scale(0.5);
+            z-index: 20;
+        }
+
+        .readme-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 32px; padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center px-10 py-8 mix-blend-difference">
+        <div class="flex items-center gap-3">
+            <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+            <span class="font-black italic text-xl">ECODASH PC</span>
+        </div>
+        <select id="langSwitcher" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none">
+            <option value="en">ENGLISH</option>
+            <option value="zh">CHINESE</option>
+        </select>
+    </header>
+
+    <main>
+        <section class="min-h-screen flex flex-col items-center justify-center text-center px-4">
+            <h1 class="hero-title mb-8 uppercase">FRKN.VPN</h1>
+            <p id="hSub" class="text-gray-500 text-xl max-w-xl mb-12">
+                Desktop power, unlimited freedom. Optimized for high-end PC workstations.
+            </p>
+            <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-[40px] padding: 40px; p-10">
+                <div class="bg-[#4a90e2] px-6 py-3 rounded-xl flex items-center gap-4 cursor-pointer">
+                    <span class="text-[10px] font-bold" id="fCode">DE</span>
+                    <span class="font-bold" id="fName">Germany Reality</span>
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="white" stroke-width="2"/></svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="scene-wrapper">
+            <div class="sticky-content">
+                
+                <div class="devices-group">
+                    <div class="pc-device laptop-pc" id="laptop">
+                        <div style="position: relative;">
+                            <svg viewBox="0 0 100 60" fill="none">
+                                <rect x="10" y="5" width="80" height="48" rx="2" fill="#151515" stroke="#333"/>
+                                <rect x="5" y="53" width="90" height="4" rx="2" fill="#222"/>
+                            </svg>
+                            <div class="screen-content" id="lapApp"></div>
+                        </div>
+                    </div>
+
+                    <div class="pc-device monitor-pc" id="monitor">
+                        <div style="position: relative;">
+                            <svg viewBox="0 0 100 75" fill="none">
+                                <rect x="2" y="2" width="96" height="60" rx="3" fill="#151515" stroke="#333"/>
+                                <rect x="40" y="62" width="20" height="10" fill="#222"/>
+                                <rect x="30" y="70" width="40" height="3" rx="1.5" fill="#111"/>
+                            </svg>
+                            <div class="screen-content" id="monApp" style="top: 6%; height: 72%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="black-hole"></div>
+                <div id="vpnLogo" class="vpn-core-text uppercase">FRKN.VPN</div>
+                
+                <div id="freeTag" class="mt-20 opacity-0 transition-all duration-1000 text-4xl font-black italic text-green-500">
+                    FREE.REAL DESKTOP
+                </div>
+            </div>
+        </section>
+
+        <section class="py-40 px-10 max-w-6xl mx-auto">
+            <h2 class="text-6xl font-black italic mb-20 text-center uppercase">README.md</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="readme-card border-l-4 border-green-500">
+                    <h4 class="text-gray-500 text-xs font-bold uppercase mb-4 tracking-widest">The Project</h4>
+                    <p id="histText" class="text-xl italic">
+                        "I am an 11-year-old developer. I built this PC ecosystem to show that desktops deserve the best protection. No phones, just pure computer power."
+                    </p>
+                </div>
+                <div class="readme-card flex flex-col justify-center gap-2 font-mono text-sm text-gray-500">
+                    <div>> Platform: Windows / Linux / macOS</div>
+                    <div>> Engine: Xray Core 2026</div>
+                    <div>> App: photo/app.png</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-20 text-center opacity-10 text-[10px] font-black tracking-[1em] uppercase">
+        EcoDash PC &copy; 2026
+    </footer>
+
+    <script>
+        const i18n = {
+            en: { sub: "Desktop power, unlimited freedom. Optimized for high-end PC workstations.", hist: "\"I am an 11-year-old developer. I built this PC ecosystem to show that desktops deserve the best protection. No phones, just pure computer power.\"" },
+            zh: { sub: "桌面动力，无限自由。为高端 PC 工作站优化。", hist: "“我是一名 11 岁的开发者。我建立这个 PC 生态系统是为了证明桌面设备值得最好的保护。没有手机，只有纯粹的电脑力量。”" }
+        };
+
+        document.getElementById('langSwitcher').addEventListener('change', (e) => {
+            const d = i18n[e.target.value];
+            document.getElementById('hSub').innerText = d.sub;
+            document.getElementById('histText').innerText = d.hist;
+        });
+
+        window.addEventListener('scroll', () => {
+            const wrapper = document.querySelector('.scene-wrapper');
+            const laptop = document.getElementById('laptop');
+            const monitor = document.getElementById('monitor');
+            const vpn = document.getElementById('vpnLogo');
+            const free = document.getElementById('freeTag');
+            
+            // Скриншоты приложения
+            const screens = [document.getElementById('lapApp'), document.getElementById('monApp')];
+
+            const rect = wrapper.getBoundingClientRect();
+            const progress = Math.min(Math.max(0, -rect.top / (rect.height - window.innerHeight)), 1);
+
+            if (progress < 0.5) {
+                const p1 = progress * 2;
+                laptop.style.transform = `translateY(${p1 * 400}px) scale(${1 - p1}) rotate(${p1 * 15}deg)`;
+                laptop.style.opacity = 1 - p1;
+                
+                monitor.style.transform = `translateY(${p1 * 450}px) scale(${1 - p1}) rotate(${p1 * -10}deg)`;
+                monitor.style.opacity = 1 - p1;
+
+                vpn.style.opacity = 0;
+                screens.forEach(s => s.style.opacity = 0);
+            } else {
+                const p2 = (progress - 0.5) * 2;
+                
+                laptop.style.opacity = p2;
+                laptop.style.transform = `translateY(${(1-p2)*100}px) scale(${p2}) translateX(-120px)`;
+                
+                monitor.style.opacity = p2;
+                monitor.style.transform = `translateY(${(1-p2)*120}px) scale(${p2}) translateX(130px)`;
+
+                // Показываем фото приложения photo/app.png
+                screens.forEach(s => s.style.opacity = p2 > 0.7 ? 1 : 0);
+
+                vpn.style.opacity = p2;
+                vpn.style.transform = `scale(${0.5 + p2 * 0.5}) translateY(-180px)`;
+                
+                free.style.opacity = p2 > 0.8 ? 1 : 0;
+            }
+        });
+    </script>
+</body>
+</html>
