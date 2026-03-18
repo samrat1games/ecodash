@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Protocol / 30 Challenges</title>
+    <style>
+        :root { --black: #000; --white: #fff; --gray: #eee; }
+        * { box-sizing: border-box; }
+        body { background: var(--white); color: var(--black); font-family: "Inter", sans-serif; margin: 0; padding: 40px 20px; }
+        .container { max-width: 650px; margin: 0 auto; }
+        
+        .lang-nav {
+            display: flex; overflow-x: auto; gap: 12px; padding-bottom: 15px; margin-bottom: 30px;
+            border-bottom: 1px solid var(--black); scrollbar-width: none;
+        }
+        .lang-nav::-webkit-scrollbar { display: none; }
+        .l-btn { background: none; border: none; cursor: pointer; font-size: 11px; text-transform: uppercase; color: #999; }
+        .l-btn.active { color: var(--black); font-weight: bold; }
+
+        .list { border-top: 1px solid var(--black); }
+        .item { border-bottom: 1px solid var(--gray); padding: 18px 0; cursor: pointer; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; }
+        .item-name { font-size: 16px; font-weight: 500; display: flex; align-items: center; }
+        
+        .status-dot {
+            width: 16px; height: 16px; border: 1px solid var(--black);
+            margin-right: 15px; cursor: pointer; flex-shrink: 0; transition: 0.2s;
+        }
+        .item.completed .status-dot { background: var(--black); position: relative; }
+        .item.completed .status-dot::after { content: '✓'; color: white; font-size: 10px; position: absolute; left: 2px; top: -1px; }
+        .item.completed .item-name { text-decoration: line-through; color: #aaa; }
+
+        .item-details { max-height: 0; overflow: hidden; transition: 0.3s; font-size: 13px; color: #666; }
+        .item.open .item-details { max-height: 100px; margin-top: 10px; }
+        
+        .counter { font-size: 12px; text-transform: uppercase; margin-bottom: 10px; color: #666; }
+        footer { margin-top: 60px; font-size: 10px; text-transform: uppercase; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="lang-nav" id="langNav"></div>
+    <div class="counter" id="progressCounter">DONE: 0 / 30</div>
+    <div class="list" id="challengeList"></div>
+    <footer>updated 2026 / database: 30_items</footer>
+</div>
+
+<script>
+const rawData = [
+    ["No Plastic Bags", "Неделя без пакетов", "Kein Plastik", "Sans Plastique", "Sin Plástico", "No Plastica", "无塑料袋", "プラ袋なし", "Пакетсіз", "Plastik Poşet Yok"],
+    ["Quick Shower", "Короткий душ (5 мин)", "Kurz duschen", "Douche rapide", "Ducha rápida", "Doccia breve", "快手淋浴", "時短シャワー", "Қысқа душ", "Kısa Duş"],
+    ["Digital Clean", "Удалить старые письма", "E-Mails löschen", "Nettoyage mail", "Limpieza digital", "Pulizia email", "删除旧邮件", "メール整理", "Поштаны тазалау", "Dijital Temizlik"],
+    ["Local Food", "Местные продукты", "Lokale Produkte", "Produits locaux", "Productos locales", "Cibo locale", "本地食物", "地産地消", "Жергілікті өнім", "Yerel Gıda"],
+    ["Reusable Cup", "Своя кружка", "Eigener Becher", "Ma tasse", "Mi taza", "La mia tazza", "自带杯", "マイカップ", "Өз кружкаң", "Kendi Kupam"],
+    ["Walk More", "Пешком вместо авто", "Zu Fuß gehen", "Marcher plus", "Caminar más", "Camminare", "多步行", "徒歩移動", "Жаяу жүру", "Daha Çok Yürüyüş"],
+    ["Power Off", "Выключать из розетки", "Stecker ziehen", "Débrancher", "Desenchufar", "Staccare spina", "拔掉插头", "主電源オフ", "Тоқтан суыру", "Fişi Çek"],
+    ["No Meat Day", "День без мяса", "Kein Fleisch Tag", "Jour sans viande", "Día sin carne", "Giorno no carne", "无肉日", "ノーミートデー", "Етсіз күн", "Et yememe Günü"],
+    ["Sort Waste", "Сортировка мусора", "Müll trennen", "Trier déchets", "Separar basura", "Riciclaggio", "垃圾分类", "ゴミ分別", "Қоқыс сұрыптау", "Atık Ayrıştırma"],
+    ["Eco Laundry", "Стирка при 30°C", "Waschen bei 30°C", "Lavage 30°C", "Lavado a 30°C", "Lavaggio 30°C", "30度洗涤", "30度で洗濯", "30°C-та жуу", "30 Derece Yıkama"],
+    ["Second Hand", "Покупка б/у вещей", "Second Hand Kauf", "Seconde main", "Segunda mano", "Second hand", "买二手货", "古着・中古品", "Ескі заттар", "İkinci El Alışveriş"],
+    ["No Straw", "Отказ от трубочек", "Kein Strohhalm", "Pas de paille", "Sin pajitas", "Niente cannuccia", "不使用吸管", "ストロー拒否", "Түтікшесіз", "Pipet Yok"],
+    ["LED Bulbs", "Замена ламп на LED", "LED Lampen", "Ampoules LED", "Bombillas LED", "Lampadine LED", "更换LED灯", "LED電球", "LED шамдары", "LED Ampul"],
+    ["Plant a Tree", "Посадить растение", "Pflanze setzen", "Planter un arbre", "Plantar algo", "Piantare", "植树/盆栽", "植物を植える", "Ағаш отырғызу", "Bitki Dik"],
+    ["Less Paper", "Отказ от чеков", "Kein Papier", "Moins de papier", "Menos papel", "Meno carta", "少用纸张", "ペーパーレス", "Қағазсыз", "Az Kağıt"],
+    ["Natural Light", "Свет от окна", "Tageslicht nutzen", "Lumière naturelle", "Luz natural", "Luce naturale", "利用自然光", "自然光を活用", "Табиғи жарық", "Doğal Işık"],
+    ["Full Load", "Стирка только полной", "Voll beladen", "Machine pleine", "Carga completa", "Carico pieno", "满载洗衣", "まとめ洗い", "Толық жуу", "Tam Kapasite"],
+    ["Eco Bags", "Фруктовки вместо зип", "Stoffbeutel", "Sacs réutilisables", "Bolsas de tela", "Sacchetti riuso", "环保果蔬袋", "エコバッグ", "Эко сөмке", "Bez Torba"],
+    ["Tap Repair", "Починить кран", "Hahn reparieren", "Réparer fuite", "Reparar grifo", "Riparare rubinetto", "修理龙头", "蛇口修理", "Кранды жөндеу", "Musluk Tamiri"],
+    ["Zero Waste DIY", "Свой декор/вещь", "Selber machen", "Fait maison", "Hecho a mano", "Fai da te", "手工制品", "DIY挑戦", "Қолөнер", "Kendi Dekorun"],
+    ["Cook at Home", "Еда дома", "Zuhause kochen", "Cuisiner maison", "Cocinar en casa", "Cucinare a casa", "在家做饭", "自炊する", "Үйде тамақтану", "Evde Yemek"],
+    ["Energy Star", "Эко-режим техники", "Energiesparmodus", "Mode éco", "Modo eco", "Modalità eco", "节能模式", "節電モード", "Эко режим", "Eko Mod"],
+    ["Recycle Battery", "Сдать батарейки", "Batterie-Recycling", "Recycler piles", "Reciclar pilas", "Smaltire pile", "回收电池", "電池リサイクル", "Батарея тапсыру", "Pil Geri Dönüşüm"],
+    ["Window Clean", "Чистые окна (свет)", "Fenster putzen", "Nettoyer vitres", "Limpiar ventanas", "Pulire vetri", "擦窗节能", "窓掃除", "Терезе жуу", "Cam Temizliği"],
+    ["Fabric Napkins", "Тканевые салфетки", "Stoffservietten", "Serviettes tissu", "Servilletas tela", "Tovaglioli stoffa", "布餐巾", "布ナプキン", "Мата майлықтар", "Kumaş Peçete"],
+    ["Cold Water", "Умываться холодной", "Kaltes Wasser", "Eau froide", "Agua fría", "Acqua fredda", "用冷水", "冷水使用", "Салқын су", "Soğuk Su"],
+    ["Compost", "Компост/Органика", "Kompostieren", "Composter", "Compostar", "Compost", "有机堆肥", "コンポスト", "Компост", "Kompost"],
+    ["Slow Fashion", "Ремонт одежды", "Kleidung flicken", "Réparer habits", "Reparar ropa", "Riparare abiti", "缝补衣物", "服の修繕", "Киім жамау", "Giysi Tamiri"],
+    ["Green Gifts", "Эко-подарки", "Grüne Geschenke", "Cadeaux éco", "Regalos eco", "Regali green", "绿色礼物", "エコギフト", "Эко сыйлық", "Yeşil Hediye"],
+    ["Eco Education", "Прочитать статью", "Eco-Wissen", "Éducation éco", "Educación eco", "Eco cultura", "学习环保知识", "エコ学習", "Эко білім", "Eko Eğitim"]
+];
+
+const langs = ["en", "ru", "de", "fr", "es", "it", "zh", "jp", "kz", "tr"];
+let curL = localStorage.getItem('eco_lang_idx') || 1;
+let states = JSON.parse(localStorage.getItem('eco_v2')) || {};
+
+function init() {
+    const nav = document.getElementById('langNav');
+    langs.forEach((l, i) => {
+        const b = document.createElement('button');
+        b.className = `l-btn ${i == curL ? 'active' : ''}`;
+        b.innerText = l.toUpperCase();
+        b.onclick = () => { curL = i; localStorage.setItem('eco_lang_idx', i); render(); };
+        nav.appendChild(b);
+    });
+    render();
+}
+
+function toggle(id) {
+    states[id] = !states[id];
+    localStorage.setItem('eco_v2', JSON.stringify(states));
+    render();
+}
+
+function render() {
+    const list = document.getElementById('challengeList');
+    list.innerHTML = '';
+    let done = 0;
+
+    rawData.forEach((item, id) => {
+        const div = document.createElement('div');
+        const isDone = states[id];
+        if(isDone) done++;
+        div.className = `item ${isDone ? 'completed' : ''}`;
+        div.onclick = (e) => { if(e.target.className !== 'status-dot') div.classList.toggle('open') };
+        div.innerHTML = `
+            <div class="item-header">
+                <span class="item-name"><div class="status-dot" onclick="toggle(${id}); event.stopPropagation();"></div>${item[curL]}</span>
+            </div>
+            <div class="item-details">Task ID: 0${id+1} / Priority: Stable. Complete to log impact.</div>
+        `;
+        list.appendChild(div);
+    });
+
+    document.querySelectorAll('.l-btn').forEach((b, i) => b.classList.toggle('active', i == curL));
+    document.getElementById('progressCounter').innerText = `DONE: ${done} / 30`;
+}
+
+init();
+</script>
+</body>
+</html>

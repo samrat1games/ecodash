@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seasonal Guide / Minimalism</title>
+    <style>
+        :root {
+            --black: #000;
+            --white: #fff;
+            --gray: #eee;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--white);
+            color: var(--black);
+            font-family: "Inter", -apple-system, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; }
+
+        /* Навигация по месяцам */
+        .month-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--black);
+            scrollbar-width: none;
+        }
+        .month-nav::-webkit-scrollbar { display: none; }
+
+        .m-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 14px; text-transform: uppercase;
+            color: #999; padding: 0; transition: 0.2s;
+        }
+        .m-btn.active { color: var(--black); font-weight: bold; }
+
+        /* Фильтры */
+        .filters { margin-bottom: 30px; display: flex; gap: 20px; }
+        .f-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+            padding: 0; color: #999;
+        }
+        .f-btn.active { color: var(--black); text-decoration: underline; }
+
+        /* Список продуктов */
+        .list { border-top: 1px solid var(--black); }
+        
+        .item {
+            border-bottom: 1px solid var(--gray);
+            padding: 15px 0;
+            cursor: pointer;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .item-name { font-size: 18px; font-weight: 500; }
+        .item-type { font-size: 10px; text-transform: uppercase; color: #999; }
+
+        .item-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            font-size: 14px;
+            color: #666;
+            margin-top: 0;
+        }
+
+        .item.open .item-details {
+            max-height: 100px;
+            margin-top: 10px;
+        }
+
+        footer { margin-top: 60px; font-size: 10px; text-transform: uppercase; color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="month-nav" id="monthNav"></div>
+
+    <div class="filters">
+        <button class="f-btn active" onclick="setFilter('all', this)">все</button>
+        <button class="f-btn" onclick="setFilter('veg', this)">овощи</button>
+        <button class="f-btn" onclick="setFilter('fruit', this)">фрукты</button>
+    </div>
+
+    <div class="list" id="foodList"></div>
+
+    <footer>updated 2026 / eco guide</footer>
+</div>
+
+<script>
+const db = [
+    {n:"Картофель", t:"veg", d:"Локальный продукт, хранится без спец. условий.", s:[0,1,2,3,4,5,6,7,8,9,10,11]},
+    {n:"Морковь", t:"veg", d:"Свежий урожай с полей, минимум удобрений.", s:[6,7,8,9,10,11,0,1,2]},
+    {n:"Свекла", t:"veg", d:"Идеальна в зимний период, сохраняет все витамины.", s:[8,9,10,11,0,1,2]},
+    {n:"Брокколи", t:"veg", d:"Богата сульфорафаном. Лучшая — в конце лета.", s:[5,6,7,8]},
+    {n:"Цветная капуста", t:"veg", d:"Минимум CO2 при перевозке с ферм.", s:[6,7,8,9]},
+    {n:"Сельдерей", t:"veg", d:"Зимний суперфуд. Хранится всю зиму.", s:[9,10,11,0,1,2]},
+    {n:"Ревень", t:"veg", d:"Кислые стебли для пирогов. Растет сам.", s:[3,4]},
+    {n:"Спаржа", t:"veg", d:"Самый короткий и ценный сезон в году.", s:[3,4,5]},
+    {n:"Кабачок", t:"veg", d:"Растет без химии на открытом солнце.", s:[5,6,7,8]},
+    {n:"Тыква", t:"veg", d:"Может храниться полгода без холодильника.", s:[8,9,10,11,0]},
+    {n:"Яблоко", t:"fruit", d:"Местные сорта 'Антоновка', 'Симиренко'.", s:[7,8,9,10,11,0,1]},
+    {n:"Груша", t:"fruit", d:"Сорта 'Дюшес' и 'Конференция'.", s:[7,8,9,10]},
+    {n:"Хурма", t:"fruit", d:"Созревает к морозам, везется из ближних стран.", s:[10,11,0]},
+    {n:"Мандарин", t:"fruit", d:"Пик сезона в субтропиках.", s:[11,0,1]},
+    {n:"Клубника", t:"fruit", d:"Самая вкусная — в июне с грядки.", s:[5,6]},
+    {n:"Малина", t:"fruit", d:"Природный антибиотик.", s:[6,7]},
+    {n:"Черника", t:"fruit", d:"Собирается вручную в лесах.", s:[6,7]},
+    {n:"Клюква", t:"fruit", d:"Хранится в воде всю зиму.", s:[8,9,10]},
+    {n:"Арбуз", t:"fruit", d:"Раньше августа брать не стоит.", s:[7,8]}
+];
+
+const months = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
+let curM = new Date().getMonth();
+let curF = 'all';
+
+function init() {
+    const nav = document.getElementById('monthNav');
+    months.forEach((m, i) => {
+        const b = document.createElement('button');
+        b.className = `m-btn ${i === curM ? 'active' : ''}`;
+        b.innerText = m;
+        b.onclick = () => {
+            curM = i;
+            document.querySelectorAll('.m-btn').forEach(el => el.classList.remove('active'));
+            b.classList.add('active');
+            render();
+        };
+        nav.appendChild(b);
+    });
+    render();
+}
+
+function setFilter(f, btn) {
+    curF = f;
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+}
+
+function render() {
+    const list = document.getElementById('foodList');
+    list.innerHTML = '';
+    
+    const filtered = db.filter(i => i.s.includes(curM) && (curF === 'all' || i.t === curF));
+
+    filtered.forEach(i => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.onclick = () => div.classList.toggle('open');
+        div.innerHTML = `
+            <div class="item-header">
+                <span class="item-name">${i.n}</span>
+                <span class="item-type">${i.t === 'veg' ? 'овощ' : 'фрукт'}</span>
+            </div>
+            <div class="item-details">${i.d}</div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+init();
+</script>
+</body>
+</html>

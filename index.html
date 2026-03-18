@@ -5,57 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoDash</title>
     <style>
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --btn-bg: #ffffff;
+            --btn-hover: #f0f0f0;
+            --border: #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --text: #ffffff;
+            --btn-bg: #1e1e1e;
+            --btn-hover: #333333;
+            --border: #444444;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: white;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        select, .theme-toggle {
+            padding: 8px;
+            border-radius: 4px;
+            background: var(--btn-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            cursor: pointer;
         }
 
         h1 {
             margin-bottom: 30px;
-            font-weight: normal;
+            font-weight: 300;
+            font-size: 3rem;
         }
 
         .buttons {
-            display: flex;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            width: 90%;
         }
 
         button {
-            padding: 15px 25px;
+            width: 100%;
+            padding: 15px 20px;
             cursor: pointer;
             font-size: 16px;
-            background: white;
-            border: 1px solid #000;
-            border-radius: 4px;
+            background: var(--btn-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: background 0.2s;
         }
 
         button:hover {
-            background: #f0f0f0;
+            background: var(--btn-hover);
         }
 
         a {
             text-decoration: none;
-            color: black;
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        footer a {
+            color: var(--text);
+            font-weight: bold;
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
-    <h1>EcoDash</h1>
-
-    <div class="buttons">
-        <a href="calc.html"><button>Калькулятор углерода</button></a>
-        <a href="vpnsite/vpn.html"><button>FRKN.vpn</button></a>
-        <a href="trecker/index.html"><button> Трекер углеродного следа</button></a>
-        <a href="recycling/index.html"><button> Справочник по сортировке мусора</button></a>
-        <a href="map/index.html"><button> Интерактивная карта пунктов приема</button></a>
+    <div class="controls">
+        <select id="langSelect" onchange="changeLang(this.value)">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+            <option value="kz">Қазақша</option>
+            <option value="zh">中文</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+            <option value="ja">日本語</option>
+            <option value="tr">Türkçe</option>
+        </select>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
 
+    <h1 id="title">EcoDash</h1>
+
+    <div class="buttons">
+        <a href="calc.html"><button id="btn-calc">Калькулятор углерода</button></a>
+        <a href="vpnsite/vpn.html"><button id="btn-vpn">FRKN.vpn</button></a>
+        <a href="trecker/index.html"><button id="btn-track">Трекер углеродного следа</button></a>
+        <a href="recycling/index.html"><button id="btn-recycle">Справочник по сортировке</button></a>
+        <a href="timer/index.html"><button id="btn-timer">Эко-таймер</button></a>
+        <a href="shop/index.html"><button id="btn-shop">Эко-Магазин</button></a>
+        <a href="ecochelendg/index.html"><button id="btn-challenge">Эко-челлендж</button></a>
+    </div>
+
+    <footer>
+        <p id="footer-text">Проект создал <a href="https://github.com/samrat1games/" target="_blank">samrat</a> | Перевод сделал Gemini</p>
+    </footer>
+
+    <script>
+        const translations = {
+            ru: { calc: "Калькулятор углерода", vpn: "FRKN.vpn", track: "Трекер углеродного следа", recycle: "Справочник по сортировке", timer: "Эко-таймер", shop: "Эко-Магазин", challenge: "Эко-челлендж", footer: 'Проект создал <a href="https://github.com/samrat1games/">samrat</a> | Перевод сделал Gemini' },
+            en: { calc: "Carbon Calculator", vpn: "FRKN.vpn", track: "Carbon Footprint Tracker", recycle: "Recycling Guide", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Challenge", footer: 'Created by <a href="https://github.com/samrat1games/">samrat</a> | Translated by Gemini' },
+            kz: { calc: "Көміртегі калькуляторы", vpn: "FRKN.vpn", track: "Көміртегі ізі трекері", recycle: "Сұрыптау анықтамалығы", timer: "Эко-таймер", shop: "Эко-Дүкен", challenge: "Эко-челлендж", footer: 'Жобаны жасаған <a href="https://github.com/samrat1games/">samrat</a> | Аударған Gemini' },
+            zh: { calc: "碳排放计算器", vpn: "FRKN.vpn", track: "碳足迹追踪器", recycle: "垃圾分类指南", timer: "生态计时器", shop: "生态商店", challenge: "生态挑战", footer: '项目创建者 <a href="https://github.com/samrat1games/">samrat</a> | 由 Gemini 翻译' },
+            es: { calc: "Calculadora de Carbono", vpn: "FRKN.vpn", track: "Rastreador de Huella", recycle: "Guía de Reciclaje", timer: "Eco Temporizador", shop: "Tienda Eco", challenge: "Eco Desafío", footer: 'Creado por <a href="https://github.com/samrat1games/">samrat</a> | Traducido por Gemini' },
+            de: { calc: "CO2-Rechner", vpn: "FRKN.vpn", track: "CO2-Fußabdruck-Tracker", recycle: "Recycling-Leitfaden", timer: "Öko-Timer", shop: "Öko-Shop", challenge: "Öko-Challenge", footer: 'Erstellt von <a href="https://github.com/samrat1games/">samrat</a> | Übersetzt von Gemini' },
+            fr: { calc: "Calculateur Carbone", vpn: "FRKN.vpn", track: "Suivi de l'empreinte", recycle: "Guide de tri", timer: "Eco Minuteur", shop: "Boutique Eco", challenge: "Eco Défi", footer: 'Créé par <a href="https://github.com/samrat1games/">samrat</a> | Traduit par Gemini' },
+            it: { calc: "Calcolatore Carbonio", vpn: "FRKN.vpn", track: "Monitoraggio Impronta", recycle: "Guida al Riciclo", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Sfida", footer: 'Creato da <a href="https://github.com/samrat1games/">samrat</a> | Tradotto da Gemini' },
+            ja: { calc: "炭素計算機", vpn: "FRKN.vpn", track: "炭素足跡トラッカー", recycle: "リサイクルガイド", timer: "エコタイマー", shop: "エコショップ", challenge: "エコチャレンジ", footer: '作成者 <a href="https://github.com/samrat1games/">samrat</a> | Gemini による翻訳' },
+            tr: { calc: "Karbon Hesaplayıcı", vpn: "FRKN.vpn", track: "Karbon Ayak İzi Takibi", recycle: "Geri Dönüşüm Rehberi", timer: "Eko Zamanlayıcı", shop: "Eko Mağaza", challenge: "Eko Yarışma", footer: '<a href="https://github.com/samrat1games/">samrat</a> tarafından oluşturuldu | Gemini tarafından çevrildi' }
+        };
+
+        function changeLang(lang) {
+            const t = translations[lang];
+            document.getElementById('btn-calc').innerText = t.calc;
+            document.getElementById('btn-vpn').innerText = t.vpn;
+            document.getElementById('btn-track').innerText = t.track;
+            document.getElementById('btn-recycle').innerText = t.recycle;
+            document.getElementById('btn-timer').innerText = t.timer;
+            document.getElementById('btn-shop').innerText = t.shop;
+            document.getElementById('btn-challenge').innerText = t.challenge;
+            document.getElementById('footer-text').innerHTML = t.footer;
+            localStorage.setItem('lang', lang);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Инициализация при загрузке
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedLang = localStorage.getItem('lang') || 'ru';
+            
+            document.body.setAttribute('data-theme', savedTheme);
+            document.getElementById('langSelect').value = savedLang;
+            changeLang(savedLang);
+        };
+    </script>
 </body>
 </html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Eco Timer | Global</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #fff;
+      color: #000;
+    }
+
+    .controls {
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    input, select, button {
+      padding: 6px 10px;
+      font-size: 13px;
+      border: 1px solid #000;
+      background: #fff;
+      border-radius: 0;
+      outline: none;
+    }
+
+    button { cursor: pointer; font-weight: bold; }
+    button:hover { background: #000; color: #fff; }
+
+    .timer {
+      display: flex;
+      gap: 15px;
+      font-size: clamp(3rem, 15vw, 6rem);
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .timer__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+    }
+
+    .label {
+      font-size: 1rem;
+      text-transform: lowercase;
+      margin-top: 10px;
+    }
+
+    .status {
+      margin-top: 30px;
+      font-size: 16px;
+      height: 24px;
+      font-weight: 500;
+    }
+
+    .attribution {
+      position: fixed;
+      bottom: 15px;
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .attribution a { color: #666; text-decoration: none; border-bottom: 1px solid #eee; }
+    .attribution a:hover { color: #000; border-bottom: 1px solid #000; }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <select id="langSel"></select>
+    <input type="text" id="resName" value="Water">
+    <select id="timeVal">
+      <option value="1">1</option>
+      <option value="3" selected>3</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+    </select>
+    <button id="btn">Start</button>
+  </div>
+
+  <div class="timer">
+    <div class="timer__item">
+      <span id="m">00</span>
+      <span class="label" id="lm">min</span>
+    </div>
+    <div>:</div>
+    <div class="timer__item">
+      <span id="s">00</span>
+      <span class="label" id="ls">sec</span>
+    </div>
+  </div>
+
+  <div class="status" id="st"></div>
+
+  <div class="attribution">
+    Engine: <a href="https://itchief.ru/javascript/countdown-timer" target="_blank">itchief.ru</a> | 
+    Dev: <a href="https://github.com/samrat1games" target="_blank">samrat</a><br>
+    L10n: <a href="#" onclick="return false;">Gemini AI (Google)</a>
+  </div>
+
+  <script>
+    const i18n = {
+      ru: { start: "Старт", stop: "Стоп", min: "мин", sec: "сек", save: "Экономия", done: "Завершено", res: "Вода" },
+      en: { start: "Start", stop: "Stop", min: "min", sec: "sec", save: "Saving", done: "Done", res: "Water" },
+      tr: { start: "Başlat", stop: "Durdur", min: "dk", sec: "sn", save: "Tasarruf", done: "Bitti", res: "Su" },
+      kk: { start: "Бастау", stop: "Тоқтату", min: "мин", sec: "сек", save: "Үнемдеу", done: "Аяқталды", res: "Су" },
+      uz: { start: "Boshlash", stop: "To'xtatish", min: "daqiqa", sec: "soniya", save: "Tejash", done: "Tugadi", res: "Suv" },
+      uk: { start: "Старт", stop: "Стоп", min: "хв", sec: "сек", save: "Економія", done: "Завершено", res: "Вода" },
+      be: { start: "Старт", stop: "Стоп", min: "хвіл", sec: "сек", save: "Эканомія", done: "Скончана", res: "Вада" },
+      az: { start: "Başla", stop: "Dayandır", min: "dəq", sec: "san", save: "Qənaət", done: "Bitdi", res: "Su" },
+      hy: { start: "Մեկնարկ", stop: "Կանգնեցնել", min: "րոպե", sec: "վայրկյան", save: "Խնայողություն", done: "Ավարտված է", res: "Ջուր" },
+      ka: { start: "დაწყება", stop: "გაჩერება", min: "წუთი", sec: "წამი", save: "დაზოგვა", done: "დასრულდა", res: "წყალი" },
+      ky: { start: "Баштоо", stop: "Токтотуу", min: "мүн", sec: "сек", save: "Үнөмдөө", done: "Бүттү", res: "Суу" },
+      tg: { start: "Оғоз", stop: "Ист", min: "дақ", sec: "сон", save: "Сарфа", done: "Тамом", res: "Об" },
+      tk: { start: "Başla", stop: "Durdur", min: "min", sec: "sek", save: "Tygsytlylyk", done: "Tamamlandy", res: "Suw" },
+      de: { start: "Start", stop: "Stopp", min: "min", sec: "sek", save: "Sparen", done: "Fertig", res: "Wasser" },
+      fr: { start: "Démarrer", stop: "Arrêter", min: "min", sec: "sec", save: "Économie", done: "Terminé", res: "Eau" },
+      es: { start: "Inicio", stop: "Parar", min: "min", sec: "seg", save: "Ahorro", done: "Hecho", res: "Agua" },
+      it: { start: "Inizio", stop: "Fermare", min: "min", sec: "sec", save: "Risparmio", done: "Fatto", res: "Acqua" },
+      pl: { start: "Start", stop: "Stop", min: "min", sec: "sek", save: "Oszczędzanie", done: "Gotowe", res: "Woda" },
+      ro: { start: "Start", stop: "Stop", min: "min", sec: "sec", save: "Economisire", done: "Gata", res: "Apă" },
+      hu: { start: "Start", stop: "Stop", min: "perc", sec: "mp", save: "Takarékosság", done: "Kész", res: "Víz" },
+      cs: { start: "Start", stop: "Stop", min: "min", sec: "sek", save: "Úspora", done: "Hotovo", res: "Voda" },
+      el: { start: "Έναρξη", stop: "Διακοπή", min: "λεπ", sec: "δευτ", save: "Εξοικονόμηση", done: "Τέλος", res: "Νερό" },
+      zh: { start: "开始", stop: "停止", min: "分", sec: "秒", save: "节约", done: "完成", res: "水" },
+      ja: { start: "開始", stop: "停止", min: "分", sec: "秒", save: "節約", done: "完了", res: "水" },
+      ko: { start: "시작", stop: "중지", min: "분", sec: "초", save: "절약", done: "완료", res: "물" },
+      ar: { start: "ابدأ", stop: "توقف", min: "دقيقة", sec: "ثانية", save: "توفير", done: "انتهى", res: "ماء" },
+      hi: { start: "शुरू", stop: "रोकें", min: "मिनट", sec: "सेकंड", save: "बचत", done: "पूरा हुआ", res: "पानी" },
+      pt: { start: "Iniciar", stop: "Parar", min: "min", sec: "seg", save: "Economia", done: "Concluído", res: "Água" },
+      nl: { start: "Start", stop: "Stop", min: "min", sec: "sec", save: "Besparing", done: "Klaar", res: "Water" },
+      sv: { start: "Start", stop: "Stopp", min: "min", sec: "sek", save: "Spara", done: "Klar", res: "Vatten" }
+    };
+
+    let timerId = null;
+    let isRunning = false;
+    const langSel = document.getElementById('langSel');
+    const btn = document.getElementById('btn');
+    const resInput = document.getElementById('resName');
+
+    // Настройка языков в селекторе
+    Object.keys(i18n).forEach(lang => {
+      const opt = document.createElement('option');
+      opt.value = lang;
+      opt.innerText = lang.toUpperCase();
+      langSel.appendChild(opt);
+    });
+
+    // Авто-определение языка
+    const userLang = navigator.language.split('-')[0];
+    langSel.value = i18n[userLang] ? userLang : 'en';
+
+    function setLang() {
+      const l = i18n[langSel.value];
+      btn.innerText = isRunning ? l.stop : l.start;
+      document.getElementById('lm').innerText = l.min;
+      document.getElementById('ls').innerText = l.sec;
+      resInput.value = l.res;
+    }
+
+    langSel.onchange = setLang;
+
+    function updateDisplay(ms) {
+      const min = Math.floor(ms / 60000);
+      const sec = Math.floor((ms % 60000) / 1000);
+      document.getElementById('m').innerText = String(min).padStart(2, '0');
+      document.getElementById('s').innerText = String(sec).padStart(2, '0');
+    }
+
+    btn.onclick = () => {
+      const l = i18n[langSel.value];
+      if (isRunning) {
+        clearInterval(timerId);
+        isRunning = false;
+        btn.innerText = l.start;
+        return;
+      }
+      
+      const duration = parseInt(document.getElementById('timeVal').value) * 60000;
+      const startTime = Date.now();
+      isRunning = true;
+      btn.innerText = l.stop;
+      document.getElementById('st').innerText = `${l.save}: ${resInput.value}`;
+
+      timerId = setInterval(() => {
+        const remaining = Math.max(0, duration - (Date.now() - startTime));
+        updateDisplay(remaining);
+        if (remaining <= 0) {
+          clearInterval(timerId);
+          isRunning = false;
+          btn.innerText = l.start;
+          document.getElementById('st').innerText = l.done;
+        }
+      }, 100);
+    };
+
+    setLang();
+    updateDisplay(parseInt(document.getElementById('timeVal').value) * 60000);
+  </script>
+</body>
+</html>
