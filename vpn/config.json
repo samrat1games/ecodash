@@ -15,13 +15,13 @@
             "settings": {
                 "vnext": [
                     {
-                        "address": "84.201.133.58",
-                        "port": 8449,
+                        "address": "taktun3.kheyrienoor.ir",
+                        "port": 80,
                         "users": [
                             {
-                                "id": "891cea51-b7f2-4bb6-b322-13acf4ad4aaf",
+                                "id": "917c427f-2c3f-4b25-abd8-314b167e27cf",
                                 "encryption": "none",
-                                "flow": "xtls-rprx-vision"
+                                "flow": ""
                             }
                         ]
                     }
@@ -29,14 +29,8 @@
             },
             "streamSettings": {
                 "network": "tcp",
-                "security": "reality",
-                "realitySettings": {
-                    "serverName": "travel.yandex.ru",
-                    "publicKey": "eWc4OGy6tScPuAS_MCVSrFpqJRj1uC9f1gh6YLc332M",
-                    "fingerprint": "chrome",
-                    "shortId": "",
-                    "spiderX": "/"
-                }
+                "security": "none",
+                "realitySettings": {}
             }
         }
     ]

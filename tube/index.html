@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRKN.tube | Ultra</title>
+    <style>
+        :root { --yt-red: #ff0000; --bg: #0f0f0f; --card-bg: #1e1e1e; --text: #ffffff; --accent: #00ffcc; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Roboto", sans-serif; }
+        body { background: var(--bg); color: var(--text); }
+
+        header { 
+            position: fixed; top: 0; width: 100%; height: 56px; 
+            background: rgba(15, 15, 15, 0.95); display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 20px; z-index: 1000;
+            border-bottom: 1px solid #333; backdrop-filter: blur(10px);
+        }
+        .logo { color: var(--yt-red); font-size: 22px; font-weight: bold; cursor: pointer; }
+        .logo span { color: #fff; }
+
+        .search-container { width: 40%; display: flex; }
+        .search-container input { 
+            width: 100%; padding: 10px 15px; background: #121212; 
+            border: 1px solid #333; color: #fff; border-radius: 40px 0 0 40px; outline: none;
+        }
+        .search-container button { 
+            padding: 0 20px; background: #222; border: 1px solid #333; 
+            border-left: none; border-radius: 0 40px 40px 0; color: #fff; cursor: pointer;
+        }
+
+        #video-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; padding: 80px 20px 20px;
+        }
+
+        .video-card { cursor: pointer; transition: 0.2s; position: relative; }
+        .video-card:hover { transform: scale(1.03); }
+        .thumbnail { width: 100%; aspect-ratio: 16/9; background: #222; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+        .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+        .v-info h3 { font-size: 14px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Modal & Player */
+        #player-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .player-box { width: 95%; max-width: 1100px; aspect-ratio: 16/9; position: relative; }
+        .close-btn { position: absolute; top: -45px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
+        iframe { width: 100%; height: 100%; border: none; border-radius: 8px; box-shadow: 0 0 20px var(--accent); }
+        
+        /* Controls */
+        .controls { margin-top: 20px; display: flex; gap: 15px; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid var(--accent); }
+        .controls label { font-size: 12px; color: var(--accent); font-weight: bold; }
+        select, button { background: #333; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        
+        .ad-block-status { font-size: 10px; color: #0f0; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="loadPersonalRecs()">FRKN<span>.tube</span></div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Поиск (напр. 'Майнкрафт')...">
+        <button onclick="searchVideos()">GO</button>
+    </div>
+    <div class="ad-block-status">🛡️ ANTI-AD ACTIVE</div>
+</header>
+
+<div id="video-grid"></div>
+
+<div id="player-modal">
+    <div class="player-box">
+        <span class="close-btn" onclick="closePlayer()">&times;</span>
+        <iframe id="video-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+    
+    <div class="controls">
+        <label>SPEED MOD:</label>
+        <select id="speedSelect" onchange="applySpeed()">
+            <option value="1">1x (Обычная)</option>
+            <option value="2">2x (Быстрая)</option>
+            <option value="5">5x (Турбо)</option>
+            <option value="10">10x (Экстрим)</option>
+            <option value="100">100x (Warp Drive)</option>
+        </select>
+        <button onclick="switchSource()">BYPASS 153 / FIX</button>
+        <span style="font-size: 10px; color: #666;">*100x может лагать на слабом инете</span>
+    </div>
+</div>
+
+<script>
+    const API_KEY = 'AIzaSyDIk_y9dylAw35-6RbnAqr_BpD905fR36g';
+    let currentId = '';
+
+    // Загрузка рекомендаций на основе истории
+    async function loadPersonalRecs() {
+        const grid = document.getElementById('video-grid');
+        grid.innerHTML = "<p>Подбираем контент для тебя...</p>";
+        
+        let history = JSON.parse(localStorage.getItem('frkn_history')) || [];
+        let query = history.length > 0 ? history[Math.floor(Math.random() * history.length)] : "Тренды 2026";
+        
+        try {
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=30&q=${query}&type=video&key=${API_KEY}`);
+            const data = await res.json();
+            render(data.items);
+        } catch (e) { grid.innerHTML = "Ошибка. Проверь VLESS!"; }
+    }
+
+    async function searchVideos() {
+        const q = document.getElementById('searchInput').value;
+        if (!q) return;
+        saveToHistory(q); // Сохраняем в историю для рекомендаций
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=30&q=${q}&type=video&key=${API_KEY}`);
+        const data = await res.json();
+        render(data.items);
+    }
+
+    function render(items) {
+        document.getElementById('video-grid').innerHTML = items.map(i => `
+            <div class="video-card" onclick="openPlayer('${i.id.videoId || i.id}', '${i.snippet.title.replace(/'/g, "")}')">
+                <div class="thumbnail"><img src="${i.snippet.thumbnails.high.url}"></div>
+                <div class="v-info"><h3>${i.snippet.title}</h3></div>
+            </div>
+        `).join('');
+    }
+
+    function openPlayer(id, title) {
+        currentId = id;
+        saveToHistory(title.split(' ')[0]); // Сохраняем часть названия для ИИ-рекомендаций
+        const ifr = document.getElementById('video-iframe');
+        // Используем встраивание без кук (меньше рекламы)
+        ifr.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&enablejsapi=1`;
+        document.getElementById('player-modal').style.display = 'flex';
+    }
+
+    function applySpeed() {
+        const speed = document.getElementById('speedSelect').value;
+        const ifr = document.getElementById('video-iframe');
+        // Посылаем команду в плеер через JS API
+        ifr.contentWindow.postMessage(JSON.stringify({
+            "event": "command",
+            "func": "setPlaybackRate",
+            "args": [parseFloat(speed), true]
+        }), "*");
+    }
+
+    function switchSource() {
+        // Пробиваем 153 ошибку через прокси
+        document.getElementById('video-iframe').src = `https://inv.tux.rs/embed/${currentId}?autoplay=1`;
+    }
+
+    function saveToHistory(term) {
+        let history = JSON.parse(localStorage.getItem('frkn_history')) || [];
+        if(!history.includes(term)) history.push(term);
+        if(history.length > 10) history.shift();
+        localStorage.setItem('frkn_history', JSON.stringify(history));
+    }
+
+    function closePlayer() {
+        document.getElementById('player-modal').style.display = 'none';
+        document.getElementById('video-iframe').src = '';
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') searchVideos(); });
+    loadPersonalRecs();
+</script>
+
+</body>
+</html>
