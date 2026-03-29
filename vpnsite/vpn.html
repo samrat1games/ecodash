@@ -57,11 +57,9 @@
             transition: transform 0.1s linear, opacity 0.2s;
         }
 
-        /* Ноутбук и Монитор */
         .laptop-pc { width: 350px; z-index: 3; bottom: 0; left: 50px; }
         .monitor-pc { width: 400px; z-index: 2; bottom: 20px; right: 50px; }
 
-        /* Контейнер для фото приложения на экране */
         .screen-content {
             position: absolute;
             top: 8%; left: 5%;
@@ -93,6 +91,18 @@
             z-index: 20;
         }
 
+        .download-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .download-card:hover {
+            border-color: var(--accent);
+            background: rgba(34, 197, 94, 0.05);
+            transform: translateY(-5px);
+        }
+
         .readme-card {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.05);
@@ -119,7 +129,29 @@
             <p id="hSub" class="text-gray-500 text-xl max-w-xl mb-12">
                 Desktop power, unlimited freedom. Optimized for high-end PC workstations.
             </p>
-            <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-[40px] padding: 40px; p-10">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mb-20">
+                <a href="vpn.exe" class="download-card p-8 rounded-[32px] flex flex-col items-center gap-4 group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="white" class="group-hover:fill-green-500 transition-colors"><path d="M0 3.449L9.75 2.1V11.719H0V3.449ZM0 12.33L9.75 12.281V21.9L0 20.502V12.33ZM10.65 1.95L24 0V11.719H10.65V1.95ZM10.65 12.281L24 12.232V24L10.65 22.05V12.281Z"/></svg>
+                    <div class="text-center">
+                        <span class="block font-black text-xl italic uppercase">Windows</span>
+                        <span class="text-[10px] text-gray-500 font-mono">STABLE BUILD (EXE)</span>
+                    </div>
+                </a>
+
+                <a href="portable_vpn.zip" class="download-card p-8 rounded-[32px] flex flex-col items-center gap-4 group">
+                    <div class="flex gap-4">
+                        <svg width="35" height="35" viewBox="0 0 24 24" fill="white" class="group-hover:fill-green-500 transition-colors"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.341-3.369-1.341-.454-1.152-1.11-1.459-1.11-1.459-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z"/></svg>
+                        <svg width="35" height="35" viewBox="0 0 24 24" fill="white" class="group-hover:fill-green-500 transition-colors"><path d="M17.05 20.28c-.96.95-2.06 1.18-3.12 1.18-1.03 0-2.25-.26-3.26-1.18-2.03-1.84-2.85-6.11-1.63-8.19 1.16-2 3.32-2.32 4.79-2.32 1.51 0 3.33.34 4.5 1.63-3.66 4.07-2.66 8.24-1.28 8.88m-2.43-11.83c0-1.74 1.41-3.15 3.15-3.15.08 0 .16.01.24.02-.32-3.12-2.95-5.57-6.16-5.57-3.42 0-6.2 2.78-6.2 6.2 0 2.22 1.17 4.16 2.93 5.25.12-.13.24-.26.37-.38.16-.14.33-.28.51-.41-1.39-1.07-2.31-2.76-2.31-4.66 0-3.15 2.55-5.7 5.7-5.7 1.49 0 2.85.57 3.88 1.52-.76.7-1.22 1.7-1.22 2.81 0 .23.02.46.06.68-.15-.01-.31-.02-.45-.02-1.46 0-3.17.32-4.32 2.31-1.34 2.29-.68 6.75 1.42 8.65.68.61 1.54.89 2.45.89.17 0 .34-.01.5-.03.22.42.5.81.82 1.17-.44.05-.88.08-1.32.08-3.42 0-6.2-2.78-6.2-6.2 0-.25.02-.51.05-.75-.02-.2-.03-.4-.03-.61 0-2.04.99-3.84 2.51-4.97-1.74-1.23-2.88-3.26-2.88-5.56 0-3.73 3.03-6.76 6.76-6.76 3.73 0 6.76 3.03 6.76 6.76 0 .43-.05.85-.13 1.25 2.47 1.02 4.21 3.47 4.21 6.32 0 1.27-.35 2.45-.96 3.46.13.06.26.13.38.2.98.54 1.76 1.41 2.25 2.45l.1.22c-1.12.82-2.52 1.13-3.81 1.13-1.63 0-3.21-.46-4.44-1.69-.12-.12-.23-.25-.34-.38-.2-.23-.38-.47-.54-.73h-.03z"/></svg>
+                    </div>
+                    <div class="text-center">
+                        <span class="block font-black text-xl italic uppercase">macOS / Linux</span>
+                        <span class="text-[10px] text-green-500 font-mono">PYTHON 3.10+ REQUIRED</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-[40px] p-10">
                 <div class="bg-[#4a90e2] px-6 py-3 rounded-xl flex items-center gap-4 cursor-pointer">
                     <span class="text-[10px] font-bold" id="fCode">DE</span>
                     <span class="font-bold" id="fName">Germany Reality</span>
@@ -175,6 +207,7 @@
                 <div class="readme-card flex flex-col justify-center gap-2 font-mono text-sm text-gray-500">
                     <div>> Platform: Windows / Linux / macOS</div>
                     <div>> Engine: Xray Core 2026</div>
+                    <div>> Core: Python 3.10 (for ZIP version)</div>
                     <div>> App: photo/app.png</div>
                 </div>
             </div>
@@ -203,8 +236,6 @@
             const monitor = document.getElementById('monitor');
             const vpn = document.getElementById('vpnLogo');
             const free = document.getElementById('freeTag');
-            
-            // Скриншоты приложения
             const screens = [document.getElementById('lapApp'), document.getElementById('monApp')];
 
             const rect = wrapper.getBoundingClientRect();
@@ -214,27 +245,19 @@
                 const p1 = progress * 2;
                 laptop.style.transform = `translateY(${p1 * 400}px) scale(${1 - p1}) rotate(${p1 * 15}deg)`;
                 laptop.style.opacity = 1 - p1;
-                
                 monitor.style.transform = `translateY(${p1 * 450}px) scale(${1 - p1}) rotate(${p1 * -10}deg)`;
                 monitor.style.opacity = 1 - p1;
-
                 vpn.style.opacity = 0;
                 screens.forEach(s => s.style.opacity = 0);
             } else {
                 const p2 = (progress - 0.5) * 2;
-                
                 laptop.style.opacity = p2;
                 laptop.style.transform = `translateY(${(1-p2)*100}px) scale(${p2}) translateX(-120px)`;
-                
                 monitor.style.opacity = p2;
                 monitor.style.transform = `translateY(${(1-p2)*120}px) scale(${p2}) translateX(130px)`;
-
-                // Показываем фото приложения photo/app.png
                 screens.forEach(s => s.style.opacity = p2 > 0.7 ? 1 : 0);
-
                 vpn.style.opacity = p2;
                 vpn.style.transform = `scale(${0.5 + p2 * 0.5}) translateY(-180px)`;
-                
                 free.style.opacity = p2 > 0.8 ? 1 : 0;
             }
         });
