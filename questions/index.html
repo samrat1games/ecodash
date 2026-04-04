@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-test.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --fg: #ffffff;
+            --border: #262626;
+            --gray: #666666;
+            --dot: #ff4500;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--fg);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            border: 1px solid var(--border);
+            padding: 50px 40px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .dot {
+            height: 6px;
+            width: 6px;
+            background-color: var(--dot);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        select {
+            background: transparent;
+            color: var(--fg);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        #question {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .opt {
+            border: 1px solid var(--border);
+            padding: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: 0.1s;
+        }
+
+        .opt:hover { border-color: #555; }
+        .opt.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+        .btn-confirm {
+            width: 100%;
+            margin-top: 40px;
+            padding: 22px;
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            font-weight: 900;
+            cursor: pointer;
+            letter-spacing: 4px;
+        }
+
+        .btn-confirm:disabled { border-color: var(--border); color: var(--gray); cursor: not-allowed; }
+
+        #result { display: none; text-align: left; }
+        .score { font-size: 8rem; font-weight: 900; margin: 20px 0; letter-spacing: -5px; }
+        
+        .footer { margin-top: 40px; font-size: 0.6rem; color: #222; letter-spacing: 2px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-ui">
+    <div class="status-bar">
+        <div><span class="dot"></span><span id="step-count">STEP 01/20</span></div>
+        <select id="lang" onchange="updateLang()">
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+            <option value="zh">ZH</option>
+            <option value="ja">JA</option>
+            <option value="uk">UK</option>
+            <option value="be">BE</option>
+            <option value="kk">KK</option>
+            <option value="tr">TR</option>
+        </select>
+    </div>
+    <div id="question">LOADING DATA...</div>
+    <div class="options" id="options"></div>
+    <button class="btn-confirm" id="next-btn" onclick="next()" disabled>CONFIRM</button>
+</div>
+
+<div class="container" id="result">
+    <div class="status-bar">FINAL REPORT</div>
+    <div class="score" id="final-score">00</div>
+    <div id="verdict" style="text-transform: none; color: #666; margin-bottom: 40px;">...</div>
+    <button class="btn-confirm" onclick="location.reload()">RESTART</button>
+</div>
+
+<div class="footer">idk how do that ,by gemini :)</div>
+
+<script>
+const DB = [
+    {
+        q: { ru: "Сколько раз можно переработать алюминий?", en: "How many times can aluminum be recycled?", zh: "铝可以回收多少次？", ja: "アルミニウムは何回リサイクルできますか？", uk: "Скільки разів можна переробити алюміній?", be: "Колькі разоў можна перапрацаваць алюміній?", kk: "Алюминийді неше рет қайта өңдеуге болады?", tr: "Alüminyum kaç kez geri dönüştürülebilir?" },
+        a: { ru: ["10 раз", "Бесконечно", "1 раз", "50 раз"], en: ["10 times", "Infinitely", "Once", "50 times"], zh: ["10次", "无限次", "1次", "50次"], ja: ["10回", "無限に", "1回", "50回"], uk: ["10 разів", "Нескінченно", "1 раз", "50 разів"], be: ["10 разоў", "Бясконца", "1 раз", "50 разоў"], kk: ["10 рет", "Шексіз", "1 рет", "50 рет"], tr: ["10 kez", "Sonsuz", "Bir kez", "50 kez"] },
+        c: 1
+    },
+    {
+        q: { ru: "Срок разложения стеклянной бутылки?", en: "Decomposition time of a glass bottle?", zh: "玻璃瓶的分解时间？", ja: "ガラス瓶の分解時間は？", uk: "Термін розкладання скляної пляшки?", be: "Тэрмін раскладання шкляной бутэлькі?", kk: "Шыны бөтелкенің ыдырау мерзімі?", tr: "Bir cam şişenin çözünme süresi?" },
+        a: { ru: ["100 лет", "500 лет", "Более 1000 лет", "50 лет"], en: ["100 years", "500 years", "Over 1000 years", "50 years"], zh: ["100年", "500年", "1000年以上", "50年"], ja: ["100年", "500年", "1000年以上", "50年"], uk: ["100 років", "500 років", "Понад 1000 років", "50 років"], be: ["100 гадоў", "500 гадоў", "Больш за 1000 гадоў", "50 гадоў"], kk: ["100 жыл", "500 жыл", "1000 жылдан астам", "50 жыл"], tr: ["100 yıl", "500 yıl", "1000 yıldan fazla", "50 yıl"] },
+        c: 2
+    },
+    {
+        q: { ru: "Главный источник микропластика в океане?", en: "Main source of microplastics in the ocean?", zh: "海洋微塑料的主要来源？", ja: "海洋マイクロプラスチックの主な源は？", uk: "Головне джерело мікропластику в океані?", be: "Галоўная крыніца мікрапластыку ў акіяне?", kk: "Мұхиттағы микропластиктің негізгі көзі?", tr: "Okyanustaki mikroplastiklerin ana kaynağı?" },
+        a: { ru: ["Бутылки", "Шины и синтетика", "Пакеты", "Рыболовные сети"], en: ["Bottles", "Tires & Synthetics", "Bags", "Fishing nets"], zh: ["瓶子", "轮胎和合成纤维", "袋子", "渔网"], ja: ["ボトル", "タイヤと合成繊維", "バッグ", "漁網"], uk: ["Пляшки", "Шини та синтетика", "Пакети", "Рибальські сітки"], be: ["Бутэлькі", "Шыны і сінтэтыка", "Пакеты", "Рыбалоўныя сеткі"], kk: ["Бөтелкелер", "Шиналар мен синтетика", "Пакеттер", "Балық аулау торлары"], tr: ["Şişeler", "Lastikler ve Sentetikler", "Poşetler", "Balık ağları"] },
+        c: 1
+    },
+    {
+        q: { ru: "Сколько литров воды нужно для 1 кг говядины?", en: "How many liters of water for 1kg of beef?", zh: "1公斤牛肉需要多少升水？", ja: "牛肉1kgに何リットルの水が必要？", uk: "Скільки літрів води потрібно для 1 кг яловичини?", be: "Колькі літраў вады трэба для 1 кг ялавічыны?", kk: "1 кг сиыр етіне қанша литр су қажет?", tr: "1 kg sığır eti için kaç litre su gerekir?" },
+        a: { ru: ["100 л", "1000 л", "5000 л", "15000 л"], en: ["100 L", "1000 L", "5000 L", "15000 L"], zh: ["100升", "1000升", "5000升", "15000升"], ja: ["100L", "1000L", "5000L", "15000L"], uk: ["100 л", "1000 л", "5000 л", "15000 л"], be: ["100 л", "1000 л", "5000 л", "15000 л"], kk: ["100 л", "1000 л", "5000 л", "15000 л"], tr: ["100 L", "1000 L", "5000 L", "15000 L"] },
+        c: 3
+    },
+    {
+        q: { ru: "Что такое 'гринвошинг'?", en: "What is 'greenwashing'?", zh: "什么是“绿色清洗”？", ja: "「グリーンウォッシング」とは？", uk: "Що таке 'грінвошинг'?", be: "Што такое 'грынвошынг'?", kk: "«Гринвошинг» деген не?", tr: "‘Greenwashing’ nedir?" },
+        a: { ru: ["Посадка деревьев", "Ложная экологичность", "Мойка овощей", "Эко-мода"], en: ["Planting trees", "False eco-friendly image", "Washing vegetables", "Eco-fashion"], zh: ["植树", "虚假的环保形象", "洗菜", "生态时尚"], ja: ["植樹", "偽の環境配慮", "野菜を洗う", "エコファッション"], uk: ["Посадка дерев", "Фальшива екологічність", "Миття овочів", "Еко-мода"], be: ["Пасадка дрэў", "Ілжывая экалагічнасць", "Мыццё гародніны", "Эка-мода"], kk: ["Ағаш отырғызу", "Жалған экологиялық", "Көкөніс жуу", "Эко-сән"], tr: ["Ağaç dikme", "Sahte çevrecilik", "Sebze yıkama", "Eko-moda"] },
+        c: 1
+    },
+    {
+        q: { ru: "Эффективная лампа для дома?", en: "Most efficient home lamp?", zh: "最节能的家用灯？", ja: "最も効率的な家庭用ランプは？", uk: "Найефективніша лампа для дому?", be: "Самая эфектыўная лямпа для дома?", kk: "Үйге арналған ең тиімді шам?", tr: "En verimli ev lambası?" },
+        a: { ru: ["Накаливания", "Галогенная", "Светодиодная (LED)", "Неоновая"], en: ["Incandescent", "Halogen", "LED", "Neon"], zh: ["白炽灯", "卤素灯", "LED灯", "霓虹灯"], ja: ["白熱灯", "ハロゲン", "LED", "ネオン"], uk: ["Розжарювання", "Галогенна", "Світлодіодна (LED)", "Неонова"], be: ["На напальвання", "Галагенная", "Святлодыёдная (LED)", "Неонавая"], kk: ["Қыздыру шамы", "Галогенді", "Жарық диодты (LED)", "Неон"], tr: ["Akkor", "Halojen", "LED", "Neon"] },
+        c: 2
+    },
+    {
+        q: { ru: "Газ, вызывающий парниковый эффект?", en: "Gas causing greenhouse effect?", zh: "产生温室效应的气体？", ja: "温室効果を引き起こすガスは？", uk: "Газ, що викликає парниковий ефект?", be: "Газ, які выклікае парніковы эфект?", kk: "Парниктік эффект тудыратын газ?", tr: "Sera etkisine neden olan gaz?" },
+        a: { ru: ["Азот", "Кислород", "Углекислый газ", "Гелий"], en: ["Nitrogen", "Oxygen", "CO2", "Helium"], zh: ["氮气", "氧气", "二氧化碳", "氦气"], ja: ["窒素", "酸素", "二酸化炭素", "ヘリウム"], uk: ["Азот", "Кисень", "Вуглекислий газ", "Гелій"], be: ["Азот", "Кісларод", "Вуглякіслы газ", "Гелій"], kk: ["Азот", "Оттегі", "Көмірқышқыл газы", "Гелий"], tr: ["Azot", "Oksijen", "Karbondioksit", "Helyum"] },
+        c: 2
+    },
+    {
+        q: { ru: "Сколько деревьев спасает 1 т макулатуры?", en: "How many trees saved by 1t of waste paper?", zh: "1吨废纸能救多少棵树？", ja: "1トンの古紙で何本の木が救われる？", uk: "Скільки дерев рятує 1 т макулатури?", be: "Колькі дрэў ратуе 1 т макулатуры?", kk: "1 т макулатура қанша ағашты сақтайды?", tr: "1 ton atık kağıt kaç ağacı kurtarır?" },
+        a: { ru: ["1", "5", "17", "100"], en: ["1", "5", "17", "100"], zh: ["1", "5", "17", "100"], ja: ["1", "5", "17", "100"], uk: ["1", "5", "17", "100"], be: ["1", "5", "17", "100"], kk: ["1", "5", "17", "100"], tr: ["1", "5", "17", "100"] },
+        c: 2
+    },
+    {
+        q: { ru: "Самый большой мусорный остров в...", en: "Largest garbage patch in...", zh: "最大的垃圾带在...", ja: "最大のゴミ集積地は...", uk: "Найбільший сміттєвий острів у...", be: "Самы вялікі смеццевы востраў у...", kk: "Ең үлкен қоқыс аралы қайда...", tr: "En büyük çöp yığını nerede..." },
+        a: { ru: ["Атлантике", "Индийском океане", "Тихом океане", "Северном Ледовитом"], en: ["Atlantic", "Indian Ocean", "Pacific", "Arctic Ocean"], zh: ["大西洋", "印度洋", "太平洋", "北冰洋"], ja: ["大西洋", "インド洋", "太平洋", "北極海"], uk: ["Атлантиці", "Індійському океані", "Тихому океані", "Північному Льодовитому"], be: ["Атлантыцы", "Індыйскім акіяне", "Ціхім акіяне", "Паўночным Ледавітым"], kk: ["Атлантикада", "Үнді мұхитында", "Тынық мұхитында", "Солтүстік мұзды"], tr: ["Atlantik", "Hint Okyanusu", "Pasifik", "Arktik Okyanusu"] },
+        c: 2
+    },
+    {
+        q: { ru: "Что нельзя выбрасывать в бак?", en: "What must not be thrown in common bin?", zh: "什么不能扔进普通垃圾箱？", ja: "普通のゴミ箱に捨ててはいけないものは？", uk: "Що не можна викидати в бак?", be: "Што нельга выкідваць у бак?", kk: "Контейнерге не тастауға болмайды?", tr: "Çöp kutusuna ne atılmamalıdır?" },
+        a: { ru: ["Газету", "Батарейки", "Пластик", "Огрызок"], en: ["Newspaper", "Batteries", "Plastic", "Apple core"], zh: ["报纸", "电池", "塑料", "苹果核"], ja: ["新聞", "電池", "プラスチック", "リンゴの芯"], uk: ["Газету", "Батарейки", "Пластик", "Огризок"], be: ["Газету", "Батарэйкі", "Пластык", "Агрызак"], kk: ["Газет", "Батареялар", "Пластик", "Алқа"], tr: ["Gazete", "Piller", "Plastik", "Elma çöpü"] },
+        c: 1
+    },
+    {
+        q: { ru: "Страна №1 по переработке?", en: "Number 1 country in recycling?", zh: "回收率第一的国家？", ja: "リサイクル率第1位の国は？", uk: "Країна №1 з переробки?", be: "Краіна №1 па перапрацоўцы?", kk: "Қайта өңдеу бойынша №1 ел?", tr: "Geri dönüşümde 1 numaralı ülke?" },
+        a: { ru: ["США", "Китай", "Германия", "Россия"], en: ["USA", "China", "Germany", "Russia"], zh: ["美国", "中国", "德国", "俄罗斯"], ja: ["アメリカ", "中国", "ドイツ", "ロシア"], uk: ["США", "Китай", "Німеччина", "Росія"], be: ["ЗША", "Кітай", "Германія", "Расія"], kk: ["АҚШ", "Қытай", "Германия", "Ресей"], tr: ["ABD", "Çin", "Almanya", "Rusya"] },
+        c: 2
+    },
+    {
+        q: { ru: "Главная причина исчезновения видов?", en: "Main cause of species extinction?", zh: "物种灭绝的主要原因？", ja: "絶滅の主な原因は？", uk: "Головна причина зникнення видів?", be: "Галоўная прычына знікнення відаў?", kk: "Түрлердің жойылуының негізгі себебі?", tr: "Türlerin yok olmasının ana nedeni?" },
+        a: { ru: ["Охота", "Зоопарки", "Разрушение среды", "Климат"], en: ["Hunting", "Zoos", "Habitat destruction", "Climate"], zh: ["狩猎", "动物园", "栖息地破坏", "气候"], ja: ["狩猟", "動物園", "生息地の破壊", "気候"], uk: ["Полювання", "Зоопарки", "Руйнування середовища", "Клімат"], be: ["Паляванне", "Заапаркі", "Разбурэнне асяроддзя", "Клімат"], kk: ["Аңшылық", "Зообақтар", "Ортаның бұзылуы", "Климат"], tr: ["Avcılık", "Hayvanat bahçeleri", "Yaşam alanı kaybı", "İklim"] },
+        c: 2
+    },
+    {
+        q: { ru: "Сколько пресной воды на Земле?", en: "How much fresh water on Earth?", zh: "地球上有多少淡水？", ja: "地球上の淡水の割合は？", uk: "Скільки прісної води на Землі?", be: "Колькі прэснай вады на Зямлі?", kk: "Жерде қанша тұщы су бар?", tr: "Dünyada ne kadar tatlı su var?" },
+        a: { ru: ["50%", "10%", "3%", "90%"], en: ["50%", "10%", "3%", "90%"], zh: ["50%", "10%", "3%", "90%"], ja: ["50%", "10%", "3%", "90%"], uk: ["50%", "10%", "3%", "90%"], be: ["50%", "10%", "3%", "90%"], kk: ["50%", "10%", "3%", "90%"], tr: ["50%", "10%", "3%", "90%"] },
+        c: 2
+    },
+    {
+        q: { ru: "Что экологичнее: душ или ванна?", en: "Shower or bath: which is greener?", zh: "淋浴还是盆浴更环保？", ja: "シャワーと風呂、どちらがエコ？", uk: "Що екологічніше: душ чи ванна?", be: "Што экалагічней: душ ці ванна?", kk: "Қайсысы экологиялық: душ па әлде ванна ма?", tr: "Duş mu küvet mi daha çevreci?" },
+        a: { ru: ["Ванна", "Душ", "Одинаково", "Зависит от пены"], en: ["Bath", "Shower", "Same", "Depends on foam"], zh: ["盆浴", "淋浴", "一样", "取决于泡沫"], ja: ["風呂", "シャワー", "同じ", "泡による"], uk: ["Ванна", "Душ", "Однаково", "Залежить від піни"], be: ["Ванна", "Душ", "Анолькава", "Залежыць ад пены"], kk: ["Ванна", "Душ", "Бірдей", "Көбікке байланысты"], tr: ["Küvet", "Duş", "Aynı", "Köpüğe bağlı"] },
+        c: 1
+    },
+    {
+        q: { ru: "Символ WWF?", en: "WWF Symbol?", zh: "世界自然基金会标志？", ja: "WWFのシンボルは？", uk: "Символ WWF?", be: "Сімвал WWF?", kk: "WWF символы?", tr: "WWF Sembolü?" },
+        a: { ru: ["Тигр", "Панда", "Медведь", "Орел"], en: ["Tiger", "Panda", "Bear", "Eagle"], zh: ["老虎", "熊猫", "熊", "老鹰"], ja: ["虎", "パンダ", "熊", "鷲"], uk: ["Тигр", "Панда", "Ведмідь", "Орел"], be: ["Тыгр", "Панда", "Мядзведзь", "Арол"], kk: ["Жолбарыс", "Панда", "Аю", "Бүркіт"], tr: ["Kaplan", "Panda", "Ayı", "Kartal"] },
+        c: 1
+    },
+    {
+        q: { ru: "Срок разложения пластика?", en: "Plastic decomposition time?", zh: "塑料分解时间？", ja: "プラスチックの分解時間は？", uk: "Термін розкладання пластику?", be: "Тэрмін раскладання пластыку?", kk: "Пластиктің ыдырау мерзімі?", tr: "Plastiğin çözünme süresi?" },
+        a: { ru: ["5 лет", "100-400 лет", "Никогда", "1 месяц"], en: ["5 years", "100-400 years", "Never", "1 month"], zh: ["5年", "100-400年", "永不", "1个月"], ja: ["5年", "100-400年", "決してない", "1ヶ月"], uk: ["5 років", "100-400 років", "Ніколи", "1 місяць"], be: ["5 гадоў", "100-400 гадоў", "Ніколі", "1 месяц"], kk: ["5 жыл", "100-400 жыл", "Ешқашан", "1 ай"], tr: ["5 yıl", "100-400 yıl", "Asla", "1 ay"] },
+        c: 1
+    },
+    {
+        q: { ru: "Что такое 'эко-след'?", en: "What is an 'eco-footprint'?", zh: "什么是“生态足迹”？", ja: "「エコロジカル・フットプリント」とは？", uk: "Що таке 'еко-слід'?", be: "Што такое 'эка-след'?", kk: "«Эко-із» деген не?", tr: "‘Ekolojik ayak izi’ nedir?" },
+        a: { ru: ["Размер обуви", "Влияние на планету", "След в лесу", "Грязь на снегу"], en: ["Shoe size", "Impact on planet", "Track in forest", "Dirt on snow"], zh: ["鞋子尺码", "对地球的影响", "森林足迹", "雪地污垢"], ja: ["靴のサイズ", "地球への影響", "森の足跡", "雪の上の汚れ"], uk: ["Розмір взуття", "Вплив на планету", "Слід у лісі", "Бруд на снігу"], be: ["Памер абутку", "Уплыў на планету", "След у лесе", "Бруд на снезе"], kk: ["Аяқ киім өлшемі", "Планетаға әсері", "Ормандағы із", "Қардағы кір"], tr: ["Ayakkabı numarası", "Gezegene etki", "Ormandaki iz", "Kar üzerindeki kir"] },
+        c: 1
+    },
+    {
+        q: { ru: "Самое грязное топливо?", en: "Dirtiest fuel?", zh: "最肮脏燃料？", ja: "最も汚い燃料は？", uk: "Найбрудніше паливо?", be: "Самае бруднае паліва?", kk: "Ең лас отын?", tr: "En kirli yakıt?" },
+        a: { ru: ["Газ", "Дрова", "Уголь", "Нефть"], en: ["Gas", "Wood", "Coal", "Oil"], zh: ["天然气", "木材", "煤炭", "石油"], ja: ["ガス", "薪", "石炭", "石油"], uk: ["Газ", "Дрова", "Вугілля", "Нафта"], be: ["Газ", "Дровы", "Вуголле", "Нафта"], kk: ["Газ", "Отын", "Көмір", "Мұнай"], tr: ["Gaz", "Odun", "Kömür", "Petrol"] },
+        c: 2
+    },
+    {
+        q: { ru: "Зачем выключать зарядку?", en: "Why unplug chargers?", zh: "为什么要拔掉充电器？", ja: "なぜ充電器を抜くの？", uk: "Навіщо вимикати зарядку?", be: "Навошта выключаць зарадку?", kk: "Зарядканы неге өшіру керек?", tr: "Şarj cihazları neden fişten çekilmeli?" },
+        a: { ru: ["Чтобы не сгорела", "Тратит ток зря", "Вредит розетке", "Низачем"], en: ["Avoid fire", "Phantom power draw", "Harms socket", "No reason"], zh: ["防火", "幻象耗电", "损坏插座", "没理由"], ja: ["火災防止", "待機電力の消費", "コンセントを傷める", "理由なし"], uk: ["Щоб не згоріла", "Витрачає струм дарма", "Шкодить розетці", "Нінавіщо"], be: ["Каб не згарэла", "Марнуе ток", "Шкодзіць разетцы", "Нінавошта"], kk: ["Өртенбеу үшін", "Тоқты босқа жағады", "Розеткаға зиян", "Ештеңе"], tr: ["Yangını önlemek", "Gereksiz güç tüketimi", "Prize zarar verir", "Sebepsiz"] },
+        c: 1
+    },
+    {
+        q: { ru: "Что такое 'устойчивое развитие'?", en: "What is 'sustainable development'?", zh: "什么是“可持续发展”？", ja: "「持続可能な開発」とは？", uk: "Що таке 'сталий розвиток'?", be: "Што такое 'ўстойлівае развіццё'?", kk: "«Тұрақты даму» деген не?", tr: "‘Sürdürülebilir kalkınma’ nedir?" },
+        a: { ru: ["Постоянный рост", "Жизнь без вреда будущему", "Отказ от заводов", "Экономика"], en: ["Constant growth", "Future-friendly life", "No factories", "Economy"], zh: ["持续增长", "对未来友好的生活", "没有工厂", "经济"], ja: ["絶え間ない成長", "将来に優しい生活", "工場なし", "経済"], uk: ["Постійний ріст", "Життя без шкоди майбутньому", "Відмова від заводів", "Економіка"], be: ["Пастаянны рост", "Жыццё без шкоды будучыні", "Адмова ад заводаў", "Эканоміка"], kk: ["Тұрақты өсу", "Болашаққа зиянсыз өмір", "Зауыттардан бас тарту", "Экономика"], tr: ["Sürekli büyüme", "Gelecek dostu yaşam", "Fabrikasız yaşam", "Ekonomi"] },
+        c: 1
+    }
+];
+
+let currentLang = 'ru';
+let currentIndex = 0;
+let score = 0;
+let selected = null;
+
+const i18n = {
+    ru: { next: "ПОДТВЕРДИТЬ", step: "ШАГ", res: "РЕЗУЛЬТАТ" },
+    en: { next: "CONFIRM", step: "STEP", res: "REPORT" },
+    zh: { next: "确认", step: "步骤", res: "报告" },
+    ja: { next: "確認", step: "ステップ", res: "報告" },
+    uk: { next: "ПІДТВЕРДИТИ", step: "КРОК", res: "ЗВІТ" },
+    be: { next: "ПАДЦВЕРДЗІЦЬ", step: "КРОК", res: "СПРАВАЗДАЧА" },
+    kk: { next: "РАСТАУ", step: "ҚАДАМ", res: "ЕСЕП" },
+    tr: { next: "ONAYLA", step: "ADIM", res: "RAPOR" }
+};
+
+function updateLang() {
+    currentLang = document.getElementById('lang').value;
+    render();
+}
+
+function render() {
+    selected = null;
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('next-btn').innerText = i18n[currentLang].next;
+    
+    const q = DB[currentIndex];
+    document.getElementById('step-count').innerText = `${i18n[currentLang].step} ${String(currentIndex+1).padStart(2, '0')}/20`;
+    document.getElementById('question').innerText = q.q[currentLang];
+    
+    const box = document.getElementById('options');
+    box.innerHTML = '';
+    
+    q.a[currentLang].forEach((text, i) => {
+        const div = document.createElement('div');
+        div.className = 'opt';
+        div.innerText = text;
+        div.onclick = () => {
+            document.querySelectorAll('.opt').forEach(el => el.classList.remove('active'));
+            div.classList.add('active');
+            selected = i;
+            document.getElementById('next-btn').disabled = false;
+        };
+        box.appendChild(div);
+    });
+}
+
+function next() {
+    if (selected === DB[currentIndex].c) score++;
+    currentIndex++;
+    if (currentIndex < 20) render();
+    else finish();
+}
+
+function finish() {
+    document.getElementById('quiz-ui').classList.add('hidden');
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('final-score').innerText = String(score).padStart(2, '0');
+    
+    const msg = score > 15 ? "EXPERT DETECTED. SYSTEM STABLE." : "RE-EDUCATION REQUIRED.";
+    document.getElementById('verdict').innerText = msg;
+}
+
+render();
+</script>
+</body>
+</html>
