@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiEco</title>
+    <style>
+        /* ========================================================================
+           1. APPLE DESIGN SYSTEM & CSS FRAMEWORK (hundreds of vars)
+           ======================================================================== */
+        :root {
+            /* Palette: Neutrals */
+            --wp-bg-body: #f5f5f7;
+            --wp-bg-card: rgba(255, 255, 255, 0.9);
+            --wp-bg-nav: rgba(245, 245, 247, 0.8);
+            --wp-border: rgba(0, 0, 0, 0.08);
+            --wp-text-main: #1d1d1f;
+            --wp-text-secondary: #86868b;
+            --wp-text-tertiary: #b1b1b6;
+            
+            /* Palette: Accent (Ecology Green) */
+            --wp-accent: #2e7d32; /* Rich Green */
+            --wp-accent-light: #e8f5e9;
+            --wp-accent-dark: #1b5e20;
+            --wp-accent-blue: #0071e3;
+            --wp-accent-yellow: #fbc02d;
+
+            /* Typography: Font Sizes */
+            --fs-display: clamp(40px, 8vw, 80px);
+            --fs-h1: clamp(32px, 6vw, 56px);
+            --fs-h2: clamp(24px, 4vw, 36px);
+            --fs-h3: 24px;
+            --fs-body: 17px;
+            --fs-small: 14px;
+            --fs-tag: 12px;
+
+            /* Spacing: Bento Grid & Layout */
+            --grid-gap: 24px;
+            --p-card: 40px;
+            --p-hero: 160px 20px 80px;
+
+            /* Effects & Animation */
+            --blur-nav: 20px;
+            --br-card: 32px;
+            --br-pill: 20px;
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --trans-slow: 0.8s var(--ease);
+            --trans-fast: 0.3s var(--ease);
+            --sh-card: 0 10px 30px rgba(0,0,0,0.03);
+            --sh-card-hover: 0 30px 60px rgba(0,0,0,0.08);
+        }
+
+        /* 1.1 Reset & Base Styles */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            outline-color: var(--wp-accent);
+        }
+
+        body {
+            background-color: var(--wp-bg-body);
+            color: var(--wp-text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            font-size: var(--fs-body);
+            line-height: 1.47;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* 1.2 Utilities & Layout Classes */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .eyebrow {
+            display: block;
+            font-size: var(--fs-tag);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--wp-accent);
+            margin-bottom: 12px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--wp-accent-dark), var(--wp-accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .br-pill { border-radius: var(--br-pill); }
+        .br-card { border-radius: var(--br-card); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--wp-bg-body); }
+        ::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #acacb0; }
+
+        /* ========================================================================
+           2. HEADER & NAVIGATION (Glassmorphism)
+           ======================================================================== */
+        nav {
+            position: fixed;
+            top: 0; width: 100%; height: 52px;
+            background: var(--wp-bg-nav);
+            backdrop-filter: blur(var(--blur-nav));
+            -webkit-backdrop-filter: blur(var(--blur-nav));
+            border-bottom: 1px solid var(--wp-border);
+            z-index: 1000;
+            display: flex; justify-content: center;
+        }
+
+        .nav-content {
+            width: 100%; max-width: 1300px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px;
+        }
+
+        .nav-logo {
+            font-weight: 700; font-size: 19px;
+            letter-spacing: -0.04em; color: var(--wp-text-main);
+            text-decoration: none;
+        }
+
+        .nav-logo span { color: var(--wp-accent); }
+
+        .nav-links { display: flex; gap: 28px; }
+
+        .nav-links a {
+            font-size: 13px; font-weight: 400;
+            color: var(--wp-text-main); text-decoration: none;
+            opacity: 0.8; transition: var(--trans-fast);
+        }
+
+        .nav-links a:hover { opacity: 1; }
+
+        /* ========================================================================
+           3. HERO SECTION (Typography Focus)
+           ======================================================================== */
+        header {
+            padding: var(--p-hero);
+            text-align: center;
+            max-width: 1000px; margin: 0 auto;
+        }
+
+        h1 {
+            font-size: var(--fs-display);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 1.0;
+            margin-bottom: 30px;
+            opacity: 0; transform: translateY(30px);
+            animation: reveal var(--trans-slow) forwards;
+        }
+
+        /* 3.1 Advanced Search Bar */
+        .search-container {
+            position: relative; max-width: 700px; margin: 50px auto;
+            opacity: 0; animation: reveal var(--trans-slow) 0.2s forwards;
+        }
+
+        .search-input {
+            width: 100%; padding: 24px 35px;
+            border-radius: var(--br-card);
+            border: 1px solid transparent;
+            background: #fff;
+            font-size: 20px; font-weight: 400;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            outline: none; transition: var(--trans-fast);
+        }
+
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-color: rgba(46, 125, 50, 0.2);
+        }
+
+        /* 3.2 Language Switcher */
+        .controls-panel {
+            display: flex; justify-content: center; gap: 12px; margin-bottom: 80px;
+            opacity: 0; animation: reveal var(--trans-slow) 0.4s forwards;
+        }
+
+        .lang-btn {
+            padding: 10px 24px; border-radius: var(--br-pill);
+            border: 1px solid var(--wp-border);
+            background: #fff; cursor: pointer;
+            font-size: 14px; font-weight: 600;
+            transition: var(--trans-fast);
+        }
+
+        .lang-btn.active {
+            background: var(--wp-text-main);
+            color: #fff; border-color: var(--wp-text-main);
+        }
+
+        .lang-btn:hover:not(.active) { background: #f0f0f2; }
+
+        /* ========================================================================
+           4. WIKI BENTO GRID (The Core Content)
+           ======================================================================== */
+        .wiki-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(280px, auto);
+            gap: var(--grid-gap);
+            padding-bottom: 120px;
+        }
+
+        /* 4.1 Card Base Styles */
+        .card {
+            background: var(--wp-bg-card);
+            border-radius: var(--br-card);
+            padding: var(--p-card);
+            border: 1px solid var(--wp-border);
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            position: relative; overflow: hidden;
+            text-decoration: none; color: inherit;
+            box-shadow: var(--sh-card);
+            transition: var(--trans-fast);
+            opacity: 0; transform: translateY(30px);
+        }
+
+        .card.reveal { animation: reveal var(--trans-slow) forwards; }
+
+        /* Hover Effects */
+        .card:hover {
+            transform: scale(1.03) translateY(-8px);
+            box-shadow: var(--sh-card-hover);
+            border-color: rgba(0,0,0,0.03);
+        }
+
+        /* 4.2 Bento Grid Spans */
+        .span-2-2 { grid-column: span 2; grid-row: span 2; }
+        .span-2-1 { grid-column: span 2; }
+        .span-1-2 { grid-row: span 2; }
+
+        /* 4.3 Card Elements */
+        .card h3 {
+            font-size: var(--fs-h3); font-weight: 700;
+            letter-spacing: -0.03em; line-height: 1.1;
+            margin-bottom: 15px;
+        }
+
+        .span-2-2 h3 { font-size: var(--fs-h1); margin-bottom: 20px; }
+
+        .card p {
+            font-size: var(--fs-body);
+            color: var(--wp-text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Icon Decor */
+        .card-icon-bg {
+            position: absolute; bottom: -20px; right: -20px;
+            font-size: 160px; opacity: 0.04; pointer-events: none;
+            transition: var(--trans-fast);
+        }
+
+        .card:hover .card-icon-bg { transform: scale(1.1) rotate(-5deg); opacity: 0.07; }
+
+        /* Special Card Types (Backgrounds) */
+        .card-energy { background: linear-gradient(135deg, #e3f2fd, #ffffff); }
+        .card-forest { background: linear-gradient(135deg, #e8f5e9, #ffffff); }
+        .card-ocean { background: linear-gradient(135deg, #f3e5f5, #ffffff); }
+        .card-dark { background: #1d1d1f; color: #fff; border-color: #333; }
+        .card-dark p { color: #a1a1a6; }
+        .card-dark .eyebrow { color: var(--wp-accent); }
+
+        /* Multi-language Logic */
+        [data-lang] { display: none; }
+        [data-lang].visible { display: block; }
+
+        /* ========================================================================
+           5. KEY CSS ANIMATIONS
+           ======================================================================== */
+        @keyframes reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================================================
+           6. RESPONSIVE MEDIA QUERIES
+           ======================================================================== */
+        @media (max-width: 1024px) {
+            .wiki-grid { grid-template-columns: repeat(2, 1fr); }
+            .span-2-2, .span-2-1, .span-1-2 { grid-column: span 2; grid-row: auto; }
+            h1 { font-size: var(--fs-h1); }
+        }
+
+        @media (max-width: 768px) {
+            .wiki-grid { grid-template-columns: 1fr; }
+            .span-2-2, .span-2-1, .span-1-2 { grid-column: span 1; }
+            .search-input { padding: 18px 25px; font-size: 18px; }
+            --p-card: 30px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <header>
+        <span class="eyebrow">The Global Interactive Archive</span>
+        <h1>Knowledge for a <br><span class="gradient-text">Sustainable Future.</span></h1>
+        
+        <div class="search-container">
+            <input type="text" id="wikiSearch" class="search-input" placeholder="Explore topics, technologies, data...">
+        </div>
+
+        <div class="controls-panel">
+            <button class="lang-btn active" onclick="WikiEco.setLang('ru')">Русский</button>
+            <button class="lang-btn" onclick="WikiEco.setLang('en')">English</button>
+            <button class="lang-btn" onclick="WikiEco.setLang('kz')">Қазақша</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="wiki-grid" id="mainGrid">
+            </div>
+    </main>
+
+    <script>
+        /**
+         * WIKIECO APPLICATION ENGINE
+         * Manages content database, localization, rendering, and search.
+         */
+        const WikiEco = (() => {
+            
+            // --- C1. The Massive Multilingual Content Database ---
+            const database = [
+                {
+                    id: 'energy',
+                    size: 'span-2-2',
+                    type: 'card-energy',
+                    icon: '☀️',
+                    content: {
+                        ru: { tag: 'Технологии Будущего', h3: 'Революция Чистой Энергии', p: 'В 2026 году глобальный переход на возобновляемые источники энергии достиг критической точки. Доля солнечной и ветровой генерации превысила 45% от мирового производства. Мы изучаем развитие твердотельных батарей, перовскитных панелей и новые прорывы в термоядерном синтезе, которые обещают бесконечную чистую энергию.' },
+                        en: { tag: 'Future Tech', h3: 'The Clean Energy Revolution', p: 'In 2026, the global transition to renewable energy sources reached a critical point. Solar and wind generation surpassed 45% of world production. We explore the development of solid-state batteries, perovskite panels, and new breakthroughs in fusion energy promising endless clean energy.' },
+                        kz: { tag: 'Болашақ технологиялары', h3: 'Таза энергия революциясы', p: '2026 жылы жаңартылатын энергия көздеріне жаһандық көшу сыни нүктеге жетті. Күн мен жел генерациясының үлесі әлемдік өндірістің 45%-нан асты. Біз қатты денелі аккумуляторларды, перовскит панельдерін және шексіз таза энергияны уәде ететін термоядролық синтездегі жаңа жетістіктерді зерттейміз.' }
+                    }
+                },
+                {
+                    id: 'forest',
+                    size: 'span-1-2',
+                    type: 'card-forest',
+                    icon: '🌲',
+                    content: {
+                        ru: { tag: 'Экосистемы', h3: 'Восстановление Амазонии', p: 'Критический порог вырубки был преодолен, но запущенные ИИ-программы по масштабному восстановлению лесов (Rewilding) дают надежду. Новые методы использования дронов и биоинженерии позволяют высаживать миллиарды деревьев в год.' },
+                        en: { tag: 'Ecosystems', h3: 'Amazon Reforestation', p: 'The critical deforestation threshold was crossed, but massive AI-driven rewilding programs offer hope. New methods using drones and bioengineering now allow for planting billions of trees annually.' },
+                        kz: { tag: 'Экожүйелер', h3: 'Амазонияны қалпына келтіру', p: 'Ормандарды кесудің критикалық шегінен өтті, бірақ ИИ негізіндегі ауқымды қалпына келтіру (Rewilding) бағдарламалары үміт береді. Дрондар мен биоинженерияны пайдаланудың жаңа әдістері жылына миллиардтаған ағаш отырғызуға мүмкіндік береді.' }
+                    }
+                },
+                {
+                    id: 'oceans',
+                    size: 'span-2-1',
+                    type: 'card-ocean',
+                    icon: '🌊',
+                    content: {
+                        ru: { tag: 'Океаны', h3: 'Очистка Океана: Проект Нептун', p: 'Система очистки "Great Pacific Garbage Patch" достигла рекордной эффективности в 95% сбора макропластика. Однако главная угроза 2026 года — микропластик. Мы изучаем биогенные фильтры на основе водорослей.' },
+                        en: { tag: 'Oceans', h3: 'Ocean Cleanup: Project Neptune', p: 'The Great Pacific Garbage Patch system reached record macroplastic collection efficiency of 95%. However, 2026’s primary threat is microplastics. We examine algae-based biogenic filters.' },
+                        kz: { tag: 'Мұхиттар', h3: 'Мұхитты тазарту: Нептун жобасы', p: '«Үлкен Тынық мұхиты қоқыс дағын» тазарту жүйесі макропластикті жинаудың рекордтық 95% тиімділігіне жетті. Дегенмен, 2026 жылдың негізгі қаупі — микропластик. Біз балдырлар негізіндегі биогендік сүзгілерді зерттейміз.' }
+                    }
+                },
+                {
+                    id: 'climate_temp',
+                    size: 'card-dark',
+                    content: {
+                        ru: { tag: 'Климат Данные', h3: '+1.18°C', p: 'Глобальное отклонение температуры от доиндустриального уровня. Ситуация критическая.' },
+                        en: { tag: 'Climate Data', h3: '+1.18°C', p: 'Global temperature deviation from pre-industrial levels. Situation is critical.' },
+                        kz: { tag: 'Климаттық деректер', h3: '+1.18°C', p: 'Индустрияға дейінгі деңгейден жаһандық температураның ауытқуы. Жағдай өте қиын.' }
+                    }
+                },
+                {
+                    id: 'circular',
+                    size: 'card',
+                    content: {
+                        ru: { tag: 'Экономика', h3: 'Циклический Переход', p: 'Большинство стран ОЭСР закрепили законодательно концепцию "ноль отходов". Ресайклинг перешел на уровень 90%.' },
+                        en: { tag: 'Economy', h3: 'Circular Transition', p: 'Most OECD countries have legislated the "zero waste" concept. Recycling efficiency hit 90%.' },
+                        kz: { tag: 'Экономика', h3: 'Циклдік ауысу', p: 'ЭЫДҰ елдерінің көпшілігі «қалдықсыз» тұжырымдамасын заң жүзінде бекітті. Қайта өңдеу тиімділігі 90%-ға жетті.' }
+                    }
+                },
+                {
+                    id: 'mobilty',
+                    size: 'card',
+                    type: 'card-energy',
+                    content: {
+                        ru: { tag: 'Мобильность', h3: 'Прощай, ДВС', p: 'Продажи новых электромобилей превысили 80% рынка в Европе. Начинается эпоха водородного грузового транспорта.' },
+                        en: { tag: 'Mobility', h3: 'Goodbye, ICE', p: 'New EV sales surpassed 80% market share in Europe. The era of hydrogen freight transport begins.' },
+                        kz: { tag: 'Ұтқырлық', h3: 'Қош бол, іштен жанатын қозғалтқыш', p: 'Еуропада жаңа электркөліктер сатылымы нарықтың 80%-нан асты. Сутегі жүк көлігінің дәуірі басталуда.' }
+                    }
+                },
+                 {
+                    id: 'food',
+                    size: 'card',
+                    type: 'card-forest',
+                    content: {
+                        ru: { tag: 'Сельское хозяйство', h3: 'Вертикальные Фермы', p: 'Городское фермерство обеспечивает 20% потребности мегаполисов в свежей зелени. Внедрение ИИ-оптимизации снизило водопотребление.' },
+                        en: { tag: 'Agriculture', h3: 'Vertical Farms', p: 'Urban farming provides 20% of megacity demand for fresh greens. AI optimization drastically reduced water consumption.' },
+                        kz: { tag: 'Ауыл шаруашылығы', h3: 'Тік фермалар', p: 'Қалалық фермерлік мегаполистердің жас көкөніске деген қажеттілігінің 20%-ын қамтамасыз етеді. ИИ-ді енгізу су тұтынуды айтарлықтай азайтты.' }
+                    }
+                },
+                 {
+                    id: 'emissions',
+                    size: 'card-dark',
+                    type: 'card-dark',
+                    content: {
+                        ru: { tag: 'Выбросы', h3: '-8% CO2', p: 'Зафиксировано первое глобальное снижение выбросов углерода за десятилетие. Спасибо зеленой энергетике.' },
+                        en: { tag: 'Emissions', h3: '-8% CO2', p: 'Recorded the first global decrease in carbon emissions in a decade. Thanks to green energy.' },
+                        kz: { tag: 'Шығарындылар', h3: '-8% CO2', p: 'Онжылдықта көміртек шығарындыларының алғашқы жаһандық төмендеуі тіркелді. Жасыл энергетикаға рахмет.' }
+                    }
+                }
+            ];
+
+            // --- C2. State State of Application ---
+            let currentLang = 'ru';
+            const gridEl = document.getElementById('mainGrid');
+            const searchInput = document.getElementById('wikiSearch');
+
+            // --- C3. Internal Functions: Rendering & Logic ---
+
+            /**
+             * Creates the HTML structure for a single wiki card
+             */
+            const createCardHTML = (data, lang) => {
+                const translation = data.content[lang];
+                const cardClasses = ['card', data.size, data.type].filter(Boolean).join(' ');
+
+                let html = `<article class="${cardClasses}">`;
+                html += `<span class="eyebrow">${translation.tag}</span>`;
+                html += `<h3>${translation.h3}</h3>`;
+                html += `<p>${translation.p}</p>`;
+                if (data.icon) {
+                    html += `<div class="card-icon-bg">${data.icon}</div>`;
+                }
+                html += `</article>`;
+                return html;
+            };
+
+            /**
+             * Renders the grid based on database and filter
+             */
+            const renderGrid = (filterText = '') => {
+                let cardsHTML = '';
+                const lowerFilter = filterText.toLowerCase().trim();
+
+                database.forEach(item => {
+                    const trans = item.content[currentLang];
+                    
+                    // Simple search check (h3 or tag or p)
+                    const matches = lowerFilter === '' || 
+                                    trans.h3.toLowerCase().includes(lowerFilter) || 
+                                    trans.tag.toLowerCase().includes(lowerFilter) ||
+                                    trans.p.toLowerCase().includes(lowerFilter);
+
+                    if (matches) {
+                        cardsHTML += createCardHTML(item, currentLang);
+                    }
+                });
+
+                gridEl.innerHTML = cardsHTML;
+                
+                // Trigger reveal animation after DOM update
+                requestAnimationFrame(() => {
+                    const cards = gridEl.querySelectorAll('.card');
+                    cards.forEach((card, index) => {
+                        // Small delay for each card
+                        setTimeout(() => card.classList.add('reveal'), index * 50);
+                    });
+                });
+            };
+
+            // --- C4. Setup Event Listeners ---
+            const initEventListeners = () => {
+                // Live Search Input
+                searchInput.addEventListener('input', (e) => {
+                    renderGrid(e.target.value);
+                });
+            };
+
+            // --- C5. Public Methods ---
+            return {
+                init: () => {
+                    console.log('WikiEco Engine Started. Database size:', database.length);
+                    initEventListeners();
+                    renderGrid();
+                },
+
+                setLang: (lang) => {
+                    if (lang === currentLang) return;
+
+                    currentLang = lang;
+                    console.log('Switching Language to:', lang);
+
+                    // Update button UI
+                    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                    event.target.classList.add('active'); // Assuming event comes from onclick
+
+                    // Re-render
+                    renderGrid(searchInput.value); // Keep current search
+                }
+            };
+        })();
+
+        // Start Application on Load
+        document.addEventListener('DOMContentLoaded', WikiEco.init);
+    </script>
+</body>
+</html>

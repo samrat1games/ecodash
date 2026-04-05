@@ -128,6 +128,7 @@
         <a href="shop/index.html"><button id="btn-shop">Эко-Магазин</button></a>
         <a href="ecochelendg/index.html"><button id="btn-challenge">Эко-челлендж</button></a>
         <a href="questions/index.html"><button id="btn-questions">Eco-test</button></a>
+        <a href="wikieco/index.html"><button id="btn-wiki">Вики-Эко</button></a>
     </div>
 
     <footer>
@@ -136,16 +137,16 @@
 
     <script>
         const translations = {
-            ru: { calc: "Калькулятор углерода", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Трекер углеродного следа", recycle: "Справочник по сортировке", timer: "Эко-таймер", shop: "Эко-Магазин", challenge: "Эко-челлендж", questions: "Эко-тест", footer: 'Проект создал <a href="https://github.com/samrat1games/">samrat</a> | Перевод сделал Gemini' },
-            en: { calc: "Carbon Calculator", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Carbon Footprint Tracker", recycle: "Recycling Guide", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Challenge", questions: "Eco-test", footer: 'Created by <a href="https://github.com/samrat1games/">samrat</a> | Translated by Gemini' },
-            kz: { calc: "Көміртегі калькуляторы", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Көміртегі ізі трекері", recycle: "Сұрыптау анықтамалығы", timer: "Эко-таймер", shop: "Эко-Дүкен", challenge: "Эко-челлендж", questions: "Эко-тест", footer: 'Жобаны жасаған <a href="https://github.com/samrat1games/">samrat</a> | Аударған Gemini' },
-            zh: { calc: "碳排放计算器", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "碳足迹追踪器", recycle: "垃圾分类指南", timer: "生态计时器", shop: "生态商店", challenge: "生态挑战", questions: "生态测试", footer: '项目创建者 <a href="https://github.com/samrat1games/">samrat</a> | 由 Gemini 翻译' },
-            es: { calc: "Calculadora de Carbono", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Rastreador de Huella", recycle: "Guía de Reciclaje", timer: "Eco Temporizador", shop: "Tienda Eco", challenge: "Eco Desafío", questions: "Eco-test", footer: 'Creado por <a href="https://github.com/samrat1games/">samrat</a> | Traducido por Gemini' },
-            de: { calc: "CO2-Rechner", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "CO2-Fußabdruck-Tracker", recycle: "Recycling-Leitfaden", timer: "Öko-Timer", shop: "Öko-Shop", challenge: "Öko-Challenge", questions: "Öko-Test", footer: 'Erstellt von <a href="https://github.com/samrat1games/">samrat</a> | Übersetzt von Gemini' },
-            fr: { calc: "Calculateur Carbone", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Suivi de l'empreinte", recycle: "Guide de tri", timer: "Eco Minuteur", shop: "Boutique Eco", challenge: "Eco Défi", questions: "Éco-test", footer: 'Créé par <a href="https://github.com/samrat1games/">samrat</a> | Traduit par Gemini' },
-            it: { calc: "Calcolatore Carbonio", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Monitoraggio Impronta", recycle: "Guida al Riciclo", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Sfida", questions: "Eco-test", footer: 'Creato da <a href="https://github.com/samrat1games/">samrat</a> | Tradotto da Gemini' },
-            ja: { calc: "炭素計算機", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "炭素足跡トラッカー", recycle: "リサイクルガイド", timer: "エコタイマー", shop: "エコショップ", challenge: "エコチャレンジ", questions: "エコテスト", footer: '作成者 <a href="https://github.com/samrat1games/">samrat</a> | Gemini による翻訳' },
-            tr: { calc: "Karbon Hesaplayıcı", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Karbon Ayak İzi Takibi", recycle: "Geri Dönüşüm Rehberi", timer: "Eko Zamanlayıcı", shop: "Eko Mağaza", challenge: "Eko Yarışма", questions: "Eko-test", footer: '<a href="https://github.com/samrat1games/">samrat</a> tarafından oluşturuldu | Gemini tarafından çevrildi' }
+            ru: { calc: "Калькулятор углерода", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Трекер углеродного следа", recycle: "Справочник по сортировке", timer: "Эко-таймер", shop: "Эко-Магазин", challenge: "Эко-челлендж", questions: "Эко-тест", wiki: "Вики-Эко", footer: 'Проект создал <a href="https://github.com/samrat1games/">samrat</a> | Перевод сделал Gemini' },
+            en: { calc: "Carbon Calculator", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Carbon Footprint Tracker", recycle: "Recycling Guide", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Challenge", questions: "Eco-test", wiki: "Wiki-Eco", footer: 'Created by <a href="https://github.com/samrat1games/">samrat</a> | Translated by Gemini' },
+            kz: { calc: "Көміртегі калькуляторы", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Көміртегі ізі трекері", recycle: "Сұрыптау анықтамалығы", timer: "Эко-таймер", shop: "Эко-Дүкен", challenge: "Эко-челлендж", questions: "Эко-тест", wiki: "Вики-Эко", footer: 'Жобаны жасаған <a href="https://github.com/samrat1games/">samrat</a> | Аударған Gemini' },
+            zh: { calc: "碳排放计算器", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "碳足迹追踪器", recycle: "垃圾分类指南", timer: "生态计时器", shop: "生态商店", challenge: "生态挑战", questions: "生态测试", wiki: "生态维基", footer: '项目创建者 <a href="https://github.com/samrat1games/">samrat</a> | 由 Gemini 翻译' },
+            es: { calc: "Calculadora de Carbono", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Rastreador de Huella", recycle: "Guía de Reciclaje", timer: "Eco Temporizador", shop: "Tienda Eco", challenge: "Eco Desafío", questions: "Eco-test", wiki: "Wiki-Eco", footer: 'Creado por <a href="https://github.com/samrat1games/">samrat</a> | Traducido por Gemini' },
+            de: { calc: "CO2-Rechner", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "CO2-Fußabdruck-Tracker", recycle: "Recycling-Leitfaden", timer: "Öko-Timer", shop: "Öko-Shop", challenge: "Öko-Challenge", questions: "Öko-Test", wiki: "Wiki-Öko", footer: 'Erstellt von <a href="https://github.com/samrat1games/">samrat</a> | Übersetzt von Gemini' },
+            fr: { calc: "Calculateur Carbone", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Suivi de l'empreinte", recycle: "Guide de tri", timer: "Eco Minuteur", shop: "Boutique Eco", challenge: "Eco Défi", questions: "Éco-test", wiki: "Wiki-Éco", footer: 'Créé par <a href="https://github.com/samrat1games/">samrat</a> | Traduit par Gemini' },
+            it: { calc: "Calcolatore Carbonio", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Monitoraggio Impronta", recycle: "Guida al Riciclo", timer: "Eco Timer", shop: "Eco Shop", challenge: "Eco Sfida", questions: "Eco-test", wiki: "Wiki-Eco", footer: 'Creato da <a href="https://github.com/samrat1games/">samrat</a> | Tradotto da Gemini' },
+            ja: { calc: "炭素計算機", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "炭素足跡トラッカー", recycle: "リサイクルガイド", timer: "エコタイマー", shop: "エコショップ", challenge: "エコチャレンジ", questions: "エコテスト", wiki: "エコウィキ", footer: '作成者 <a href="https://github.com/samrat1games/">samrat</a> | Gemini による翻訳' },
+            tr: { calc: "Karbon Hesaplayıcı", vpn: "FRKN.vpn", tube: "FRKN.tube", track: "Karbon Ayak İzi Takibi", recycle: "Geri Dönüşüm Rehberi", timer: "Eko Zamanlayıcı", shop: "Eko Mağaza", challenge: "Eko Yarışma", questions: "Eko-test", wiki: "Wiki-Eko", footer: '<a href="https://github.com/samrat1games/">samrat</a> tarafından oluşturuldu | Gemini tarafından çevrildi' }
         };
 
         function changeLang(lang) {
@@ -159,6 +160,7 @@
             document.getElementById('btn-shop').innerText = t.shop;
             document.getElementById('btn-challenge').innerText = t.challenge;
             document.getElementById('btn-questions').innerText = t.questions;
+            document.getElementById('btn-wiki').innerText = t.wiki;
             document.getElementById('footer-text').innerHTML = t.footer;
             localStorage.setItem('lang', lang);
         }

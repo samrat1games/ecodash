@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Game Platform - Игровая платформа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Меню игр (главный экран) */
+        .games-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .games-menu.hide {
+            transform: translateX(-100%);
+        }
+
+        .games-header {
+            text-align: center;
+            padding: 30px;
+            color: white;
+        }
+
+        .games-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .games-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .game-cover {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .game-icon {
+            position: absolute;
+            bottom: -25px;
+            left: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .game-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .game-info {
+            padding: 30px 15px 15px 15px;
+            color: white;
+        }
+
+        .game-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .game-description {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .play-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .play-button:hover {
+            background: #45a049;
+        }
+
+        /* Редактор (скрыт по умолчанию) */
+        .editor-container {
+            display: none;
+        }
+
+        .editor-container.active {
+            display: block;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(30, 30, 40, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            z-index: 2;
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+        }
+
+        .panel h3 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 8px;
+        }
+
+        .back-to-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-to-menu:hover {
+            background: rgba(0,0,0,0.9);
+        }
+
+        .property-group {
+            margin-bottom: 15px;
+        }
+
+        .property-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .property-group input, .property-group select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #555;
+            color: white;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button.danger {
+            background: #f44336;
+        }
+
+        .object-list {
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .object-item {
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .object-item.selected {
+            background: #4CAF50;
+        }
+
+        #editor-container {
+            height: 300px;
+            margin-top: 10px;
+            border: 1px solid #555;
+        }
+
+        .status {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 2;
+        }
+
+        .create-game-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: auto;
+            padding: 15px 30px;
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .create-game-btn:hover {
+            background: #ff5252;
+        }
+    </style>
+</head>
+<body>
+    <!-- Меню игр -->
+    <div class="games-menu" id="games-menu">
+        <div class="games-header">
+            <h1>🎮 Игровая Платформа</h1>
+            <p>Выбери игру или создай свою</p>
+        </div>
+        <div class="games-grid" id="games-grid"></div>
+        <button class="create-game-btn" id="create-game-btn">➕ Создать новую игру</button>
+    </div>
+
+    <!-- Редактор игр -->
+    <div class="editor-container" id="editor-container">
+        <div id="canvas-container"></div>
+        <button class="back-to-menu" id="back-to-menu">← К играм</button>
+        
+        <div class="panel">
+            <h3>🎮 Редактор: <span id="current-game-name">Новая игра</span></h3>
+            
+            <div class="property-group">
+                <label>📋 Объекты</label>
+                <div id="object-list" class="object-list"></div>
+                <button id="btn-add-cube">➕ Добавить куб</button>
+                <button id="btn-save-game">💾 Сохранить игру</button>
+            </div>
+
+            <div id="properties-panel">
+                <h4>Свойства выбранного</h4>
+                <div class="property-group">
+                    <label>X</label>
+                    <input type="number" id="pos-x" step="0.1">
+                </div>
+                <div class="property-group">
+                    <label>Y</label>
+                    <input type="number" id="pos-y" step="0.1">
+                </div>
+                <div class="property-group">
+                    <label>Z</label>
+                    <input type="number" id="pos-z" step="0.1">
+                </div>
+                <div class="property-group">
+                    <label>Цвет</label>
+                    <input type="color" id="obj-color">
+                </div>
+                <button id="btn-update">🔄 Обновить</button>
+                <button id="btn-delete" class="danger">🗑 Удалить</button>
+            </div>
+
+            <h4>📝 Скрипт (Monaco Editor)</h4>
+            <div id="monaco-editor-container"></div>
+            <button id="btn-run-script">▶ Выполнить скрипт</button>
+        </div>
+
+        <div class="status" id="status">⚙ Редактор готов</div>
+    </div>
+
+    <!-- Библиотеки -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+            }
+        }
+    </script>
+    
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import * as CANNON from 'cannon-es';
+
+        // ========== СИСТЕМА ИГР ==========
+        let games = [];
+        let currentGame = null;
+        let editorMode = false;
+        
+        // Стандартные игры
+        const defaultGames = [
+            {
+                id: 'game1',
+                name: 'Приключение в кубе',
+                description: 'Исследуй мир кубов и физики',
+                icon: '🎲',
+                cover: 'https://via.placeholder.com/400x200/4CAF50/ffffff?text=Adventure',
+                gameData: {
+                    parts: [
+                        { id: '1', x: 0, y: 1, z: 0, color: '#ff6600' },
+                        { id: '2', x: 2, y: 0.5, z: 2, color: '#44aaff' }
+                    ]
+                }
+            },
+            {
+                id: 'game2',
+                name: 'Физическая песочница',
+                description: 'Строй и разрушай',
+                icon: '🏗️',
+                cover: 'https://via.placeholder.com/400x200/FF5722/ffffff?text=Sandbox',
+                gameData: {
+                    parts: [
+                        { id: '1', x: 0, y: 2, z: 0, color: '#ff4444' },
+                        { id: '2', x: 1, y: 1, z: 1, color: '#44ff44' },
+                        { id: '3', x: -1, y: 1, z: -1, color: '#4444ff' }
+                    ]
+                }
+            },
+            {
+                id: 'game3',
+                name: 'Башня блоков',
+                description: 'Собери самую высокую башню',
+                icon: '🗼',
+                cover: 'https://via.placeholder.com/400x200/FFC107/ffffff?text=Tower',
+                gameData: {
+                    parts: [
+                        { id: '1', x: 0, y: 0.5, z: 0, color: '#ffaa00' },
+                        { id: '2', x: 0, y: 1.5, z: 0, color: '#ffaa00' },
+                        { id: '3', x: 0, y: 2.5, z: 0, color: '#ffaa00' }
+                    ]
+                }
+            }
+        ];
+
+        // Загрузка игр из localStorage
+        function loadGames() {
+            const saved = localStorage.getItem('gamePlatform_games');
+            if (saved) {
+                games = JSON.parse(saved);
+            } else {
+                games = defaultGames;
+                saveGames();
+            }
+            renderGamesMenu();
+        }
+
+        function saveGames() {
+            localStorage.setItem('gamePlatform_games', JSON.stringify(games));
+        }
+
+        function renderGamesMenu() {
+            const grid = document.getElementById('games-grid');
+            grid.innerHTML = '';
+            
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => playGame(game);
+                
+                card.innerHTML = `
+                    <div class="game-cover" style="background-image: url('${game.cover}')">
+                        <div class="game-icon">
+                            <span style="font-size: 40px; display: block; text-align: center;">${game.icon}</span>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-name">${escapeHtml(game.name)}</div>
+                        <div class="game-description">${escapeHtml(game.description)}</div>
+                        <button class="play-button" onclick="event.stopPropagation(); playGameById('${game.id}')">▶ Играть</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        window.playGameById = function(gameId) {
+            const game = games.find(g => g.id === gameId);
+            if (game) playGame(game);
+        };
+
+        function playGame(game) {
+            currentGame = game;
+            document.getElementById('games-menu').classList.add('hide');
+            document.getElementById('editor-container').classList.add('active');
+            document.getElementById('current-game-name').textContent = game.name;
+            initGameEngine(game.gameData);
+        }
+
+        function createNewGame() {
+            const newGame = {
+                id: 'game_' + Date.now(),
+                name: 'Новая игра ' + (games.length + 1),
+                description: 'Моя новая игра',
+                icon: '🎮',
+                cover: 'https://via.placeholder.com/400x200/9C27B0/ffffff?text=New+Game',
+                gameData: {
+                    parts: [
+                        { id: '1', x: 0, y: 1, z: 0, color: '#ff6600' }
+                    ]
+                }
+            };
+            games.push(newGame);
+            saveGames();
+            renderGamesMenu();
+            playGame(newGame);
+        }
+
+        // ========== ИГРОВОЙ ДВИЖОК ==========
+        let scene, camera, renderer, physicsWorld;
+        let gameParts = new Map();
+        let gameLoopId = null;
+        let monacoEditor = null;
+
+        function initGameEngine(gameData) {
+            // Очистка предыдущей сцены
+            if (gameLoopId) {
+                cancelAnimationFrame(gameLoopId);
+            }
+            
+            const container = document.getElementById('canvas-container');
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            
+            gameParts.clear();
+            
+            // Инициализация Three.js
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111122);
+            scene.fog = new THREE.Fog(0x111122, 20, 50);
+            
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(8, 6, 12);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+            
+            // Освещение
+            const ambientLight = new THREE.AmbientLight(0x404060);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(5, 10, 7);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+            
+            const gridHelper = new THREE.GridHelper(20, 20, 0x88aaff, 0x335588);
+            scene.add(gridHelper);
+            
+            // Физика
+            physicsWorld = new CANNON.World();
+            physicsWorld.gravity = new CANNON.Vec3(0, -9.82, 0);
+            physicsWorld.broadphase = new CANNON.NaiveBroadphase();
+            
+            // Загрузка объектов из gameData
+            if (gameData && gameData.parts) {
+                gameData.parts.forEach(partData => {
+                    addPartToGame(partData.id, partData.x, partData.y, partData.z, partData.color);
+                });
+            }
+            
+            refreshObjectList();
+            startGameLoop();
+            
+            // Настройка Monaco Editor
+            if (!monacoEditor && document.getElementById('monaco-editor-container')) {
+                require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+                require(['vs/editor/editor.main'], function() {
+                    monacoEditor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                        value: '// Напиши скрипт для выбранного объекта\n// Доступна переменная "part"\npart.position.y += 0.01;',
+                        language: 'javascript',
+                        theme: 'vs-dark',
+                        automaticLayout: true
+                    });
+                });
+            }
+        }
+        
+        function addPartToGame(id, x, y, z, color) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshStandardMaterial({ color: color });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(x, y, z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
+            
+            const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+            const body = new CANNON.Body({ mass: 1 });
+            body.addShape(shape);
+            body.position.set(x, y, z);
+            physicsWorld.addBody(body);
+            
+            gameParts.set(id, {
+                id: id,
+                mesh: mesh,
+                body: body,
+                color: color,
+                script: ''
+            });
+        }
+        
+        function removePartFromGame(id) {
+            const part = gameParts.get(id);
+            if (part) {
+                scene.remove(part.mesh);
+                physicsWorld.removeBody(part.body);
+                gameParts.delete(id);
+            }
+        }
+        
+        function updatePartTransform(id, x, y, z, color) {
+            const part = gameParts.get(id);
+            if (part) {
+                part.mesh.position.set(x, y, z);
+                part.body.position.set(x, y, z);
+                if (color) {
+                    part.mesh.material.color.set(color);
+                    part.color = color;
+                }
+            }
+        }
+        
+        function refreshObjectList() {
+            const container = document.getElementById('object-list');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let [id, part] of gameParts) {
+                const div = document.createElement('div');
+                div.className = 'object-item' + (selectedPartId === id ? ' selected' : '');
+                div.textContent = `📦 Объект ${id}`;
+                div.onclick = () => selectPart(id);
+                container.appendChild(div);
+            }
+        }
+        
+        let selectedPartId = null;
+        
+        function selectPart(id) {
+            selectedPartId = id;
+            refreshObjectList();
+            const part = gameParts.get(id);
+            if (part && document.getElementById('pos-x')) {
+                document.getElementById('pos-x').value = part.mesh.position.x;
+                document.getElementById('pos-y').value = part.mesh.position.y;
+                document.getElementById('pos-z').value = part.mesh.position.z;
+                document.getElementById('obj-color').value = part.color;
+                if (monacoEditor) {
+                    monacoEditor.setValue(part.script || '// Нет скрипта');
+                }
+            }
+        }
+        
+        function startGameLoop() {
+            let lastTime = performance.now();
+            
+            function loop() {
+                const now = performance.now();
+                let delta = Math.min(0.033, (now - lastTime) / 1000);
+                lastTime = now;
+                
+                physicsWorld.step(1 / 60, delta, 3);
+                
+                for (let [id, part] of gameParts) {
+                    part.mesh.position.copy(part.body.position);
+                    part.mesh.quaternion.copy(part.body.quaternion);
+                }
+                
+                camera.lookAt(0, 1, 0);
+                renderer.render(scene, camera);
+                gameLoopId = requestAnimationFrame(loop);
+            }
+            
+            gameLoopId = requestAnimationFrame(loop);
+        }
+        
+        function saveCurrentGame() {
+            if (!currentGame) return;
+            
+            const partsData = [];
+            for (let [id, part] of gameParts) {
+                partsData.push({
+                    id: id,
+                    x: part.mesh.position.x,
+                    y: part.mesh.position.y,
+                    z: part.mesh.position.z,
+                    color: part.color
+                });
+            }
+            
+            currentGame.gameData = { parts: partsData };
+            
+            const index = games.findIndex(g => g.id === currentGame.id);
+            if (index !== -1) {
+                games[index] = currentGame;
+            }
+            saveGames();
+            
+            document.getElementById('status').textContent = '✅ Игра сохранена!';
+            setTimeout(() => {
+                document.getElementById('status').textContent = '🎮 Редактор готов';
+            }, 2000);
+        }
+        
+        // ========== UI ОБРАБОТЧИКИ ==========
+        document.getElementById('create-game-btn')?.addEventListener('click', createNewGame);
+        document.getElementById('back-to-menu')?.addEventListener('click', () => {
+            document.getElementById('games-menu').classList.remove('hide');
+            document.getElementById('editor-container').classList.remove('active');
+            if (gameLoopId) {
+                cancelAnimationFrame(gameLoopId);
+            }
+        });
+        
+        document.getElementById('btn-add-cube')?.addEventListener('click', () => {
+            const newId = String(Date.now());
+            addPartToGame(newId, Math.random() * 4 - 2, 1, Math.random() * 4 - 2, '#88ff88');
+            refreshObjectList();
+        });
+        
+        document.getElementById('btn-update')?.addEventListener('click', () => {
+            if (!selectedPartId) return;
+            const x = parseFloat(document.getElementById('pos-x').value);
+            const y = parseFloat(document.getElementById('pos-y').value);
+            const z = parseFloat(document.getElementById('pos-z').value);
+            const color = document.getElementById('obj-color').value;
+            updatePartTransform(selectedPartId, x, y, z, color);
+        });
+        
+        document.getElementById('btn-delete')?.addEventListener('click', () => {
+            if (selectedPartId) {
+                removePartFromGame(selectedPartId);
+                selectedPartId = null;
+                refreshObjectList();
+            }
+        });
+        
+        document.getElementById('btn-save-game')?.addEventListener('click', saveCurrentGame);
+        
+        document.getElementById('btn-run-script')?.addEventListener('click', () => {
+            if (!selectedPartId || !monacoEditor) return;
+            const partData = gameParts.get(selectedPartId);
+            if (!partData) return;
+            
+            const scriptCode = monacoEditor.getValue();
+            partData.script = scriptCode;
+            
+            try {
+                const scriptFunc = new Function('part', scriptCode);
+                scriptFunc(partData.mesh);
+                document.getElementById('status').textContent = '✅ Скрипт выполнен';
+                setTimeout(() => {
+                    document.getElementById('status').textContent = '🎮 Редактор готов';
+                }, 1500);
+            } catch(e) {
+                document.getElementById('status').textContent = '❌ Ошибка: ' + e.message;
+            }
+        });
+        
+        // Обработка resize
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+        
+        // Запуск
+        loadGames();
+        
+        console.log('Платформа с меню игр готова!');
+    </script>
+</body>
+</html>
