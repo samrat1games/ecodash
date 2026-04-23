@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Eco-World P2P Online</title>
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #1a1a1a; font-family: sans-serif; color: white; touch-action: none; }
+        canvas { display: block; background: #4d7c32; }
+        
+        .panel { position: absolute; background: rgba(0,0,0,0.85); padding: 10px; border-radius: 8px; border: 2px solid #4CAF50; pointer-events: all; }
+        #stats { top: 10px; left: 10px; }
+        #shop-btn { top: 10px; left: 180px; background: #f1c40f; color: #000; cursor: pointer; padding: 8px; border-radius: 5px; font-weight: bold; }
+        
+        /* ЧАТ И СЕТЬ */
+        #network-panel { top: 10px; right: 10px; width: 240px; }
+        #chat-box { height: 100px; overflow-y: auto; font-size: 11px; margin-bottom: 5px; border-bottom: 1px solid #333; }
+        #net-input { width: 100%; background: #000; border: 1px solid #444; color: #fff; padding: 5px; box-sizing: border-box; margin-top: 5px; }
+
+        /* ИНВЕНТАРЬ */
+        #inventory { bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+        .slot { width: 60px; height: 75px; border: 2px solid #444; background: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; text-align: center; font-size: 10px; }
+        .slot.active { border-color: #f1c40f; background: #333; box-shadow: 0 0 10px #f1c40f; }
+        .slot b { font-size: 16px; }
+
+        /* МАГАЗИН */
+        #shop { display: none; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 100; text-align: center; }
+        .shop-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #444; }
+        .buy-btn { background: #2ecc71; border: none; padding: 4px 8px; cursor: pointer; color: white; font-weight: bold; }
+
+        #login { position: absolute; inset: 0; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        input { padding: 10px; border-radius: 5px; border: none; width: 200px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="login">
+    <h2 style="color: #2ecc71;">ECO-WORLD P2P</h2>
+    <input type="text" id="username" placeholder="Твоё имя...">
+    <button onclick="initGame()" class="buy-btn" style="padding: 10px 40px;">ИГРАТЬ</button>
+</div>
+
+<div id="stats" class="panel">
+    <div>👤 <span id="u-name">?</span></div>
+    <div style="color: #f1c40f;">💰 $<span id="u-money">100</span></div>
+</div>
+
+<div id="shop-btn" onclick="toggleShop()">🛒 МАГАЗИН</div>
+
+<div id="network-panel" class="panel">
+    <div id="chat-box"></div>
+    <input type="text" id="net-input" placeholder="Чат или ID друга...">
+    <button onclick="connectToPeer()" style="width:100%; margin-top:5px; font-size:10px;">ПОДКЛЮЧИТЬСЯ ПО ID</button>
+</div>
+
+<div id="shop" class="panel">
+    <h3>МАГАЗИН</h3>
+    <div class="shop-item"><span>Дуб ($40)</span><button class="buy-btn" onclick="buy(0, 40)">КУПИТЬ</button></div>
+    <div class="shop-item"><span>Цветок ($15)</span><button class="buy-btn" onclick="buy(1, 15)">КУПИТЬ</button></div>
+    <div class="shop-item"><span>Турель ($150)</span><button class="buy-btn" onclick="buy(2, 150)">КУПИТЬ</button></div>
+    <button onclick="toggleShop()" style="margin-top:10px;">ЗАКРЫТЬ</button>
+</div>
+
+<div id="inventory">
+    <div class="slot active" id="s0" onclick="setSlot(0)"><b>🌳</b><br><span id="q0">2</span></div>
+    <div class="slot" id="s1" onclick="setSlot(1)"><b>🌸</b><br><span id="q1">5</span></div>
+    <div class="slot" id="s2" onclick="setSlot(2)"><b>🔫</b><br><span id="q2">0</span></div>
+    <div class="slot" id="s3" onclick="setSlot(3)"><b>💧</b><br>Лейка</div>
+</div>
+
+<canvas id="g"></canvas>
+
+<script>
+const canvas = document.getElementById('g');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let money = 100, inv = [2, 5, 0], selected = 0, objects = [], playerName = "";
+let player = { x: 1500, y: 1500, w: 60, h: 60, dir: 1 };
+let remotePlayer = { x: 0, y: 0, active: false, name: "" };
+let camera = { x: 0, y: 0 };
+const spots = [];
+for(let i=0; i<10; i++) for(let j=0; j<10; j++) spots.push({ x: 1100 + i*140, y: 1100 + j*130, w: 90, h: 50, occ: false });
+
+const pImg = new Image();
+pImg.src = 'https://png.klev.club/uploads/posts/2024-04/png-klev-club-p3g0-p-personazh-pikselnii-png-3.png';
+
+// --- СЕТЕВАЯ ЛОГИКА (P2P) ---
+let peer, conn;
+function initGame() {
+    playerName = document.getElementById('username').value || "EcoPlayer";
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('u-name').textContent = playerName;
+
+    peer = new Peer();
+    peer.on('open', id => addMsg("Твой ID: " + id, "СЕТЬ"));
+    peer.on('connection', c => {
+        conn = c;
+        handleData();
+        addMsg("Друг подключился!", "СИСТЕМА");
+    });
+    
+    updateUI();
+    loop();
+}
+
+function connectToPeer() {
+    const id = document.getElementById('net-input').value;
+    if(id.length > 5) {
+        conn = peer.connect(id);
+        handleData();
+        addMsg("Подключение...", "СЕТЬ");
+    }
+}
+
+function handleData() {
+    conn.on('data', data => {
+        if(data.type === 'move') { remotePlayer.x = data.x; remotePlayer.y = data.y; remotePlayer.active = true; remotePlayer.name = data.name; }
+        if(data.type === 'chat') addMsg(data.txt, data.name);
+        if(data.type === 'plant') objects.push(data.obj);
+        if(data.type === 'sync') objects = data.objs;
+    });
+}
+
+// --- ИГРОВАЯ ЛОГИКА ---
+function addMsg(t, n) {
+    const b = document.getElementById('chat-box');
+    b.innerHTML += `<div><b>${n}:</b> ${t}</div>`;
+    b.scrollTop = b.scrollHeight;
+}
+
+document.getElementById('net-input').onkeydown = (e) => {
+    if(e.key === 'Enter' && conn) {
+        const txt = e.target.value;
+        conn.send({ type: 'chat', txt: txt, name: playerName });
+        addMsg(txt, "Вы");
+        e.target.value = "";
+    }
+};
+
+function setSlot(i) {
+    document.getElementById('s'+selected).classList.remove('active');
+    selected = i;
+    document.getElementById('s'+selected).classList.add('active');
+}
+
+function buy(id, p) {
+    if(money >= p) { money -= p; inv[id]++; updateUI(); }
+}
+
+function toggleShop() {
+    const s = document.getElementById('shop');
+    s.style.display = s.style.display === 'block' ? 'none' : 'block';
+}
+
+function updateUI() {
+    document.getElementById('u-money').textContent = Math.floor(money);
+    for(let i=0; i<3; i++) document.getElementById('q'+i).textContent = inv[i];
+}
+
+const keys = {};
+window.onkeydown = e => { keys[e.code] = true; if(e.key >= '1' && e.key <= '4') setSlot(parseInt(e.key)-1); };
+window.onkeyup = e => keys[e.code] = false;
+
+let mDown = false;
+window.onmousedown = () => mDown = true;
+window.onmouseup = () => mDown = false;
+
+function update() {
+    if(keys['KeyW']) player.y -= 6;
+    if(keys['KeyS']) player.y += 6;
+    if(keys['KeyA']) { player.x -= 6; player.dir = -1; }
+    if(keys['KeyD']) { player.x += 6; player.dir = 1; }
+
+    camera.x = player.x - canvas.width/2;
+    camera.y = player.y - canvas.height/2;
+
+    if(conn) conn.send({ type: 'move', x: player.x, y: player.y, name: playerName });
+
+    if(mDown) {
+        spots.forEach(s => {
+            const d = Math.hypot((player.x+30)-(s.x+45), (player.y+30)-(s.y+25));
+            if(d < 70) {
+                const obj = objects.find(o => o.sx === s.x && o.sy === s.y);
+                if(selected === 3 && obj) obj.w = Math.min(100, obj.w + 1);
+                else if(!obj && inv[selected] > 0 && selected < 3) {
+                    const newObj = { sx: s.x, sy: s.y, t: selected, w: 100, g: 0 };
+                    objects.push(newObj);
+                    inv[selected]--; updateUI();
+                    if(conn) conn.send({ type: 'plant', obj: newObj });
+                }
+            }
+        });
+    }
+
+    objects.forEach((o, i) => {
+        o.w -= 0.04;
+        if(o.w > 30 && o.g < 100) o.g += 0.08;
+        if(o.w <= 0) objects.splice(i, 1);
+    });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save(); ctx.translate(-camera.x, -camera.y);
+
+    // Мир
+    ctx.fillStyle = "#3e6126"; ctx.fillRect(0,0,3000,3000);
+    spots.forEach(s => { ctx.fillStyle = "#5d4037"; ctx.fillRect(s.x, s.y, s.w, s.h); });
+
+    objects.forEach(o => {
+        const size = (o.g/100)*60 + 10;
+        ctx.fillStyle = o.w < 30 ? "#795548" : (o.t === 0 ? "#1b5e20" : "#d81b60");
+        ctx.beginPath(); ctx.arc(o.sx+45, o.sy+10, size/2, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#3498db"; ctx.fillRect(o.sx, o.sy+45, (o.w/100)*90, 4);
+    });
+
+    // Игроки
+    if(remotePlayer.active) {
+        ctx.globalAlpha = 0.7; ctx.drawImage(pImg, remotePlayer.x, remotePlayer.y, 60, 60);
+        ctx.fillStyle = "white"; ctx.fillText(remotePlayer.name, remotePlayer.x, remotePlayer.y); ctx.globalAlpha = 1;
+    }
+    ctx.save();
+    if(player.dir === -1) { ctx.translate(player.x+60, player.y); ctx.scale(-1, 1); ctx.drawImage(pImg,0,0,60,60); }
+    else ctx.drawImage(pImg, player.x, player.y, 60, 60);
+    ctx.restore();
+
+    ctx.restore();
+}
+
+function loop() { update(); draw(); requestAnimationFrame(loop); }
+setInterval(() => { money += 1; updateUI(); if(conn) conn.send({type: 'sync', objs: objects}); }, 2000);
+
+canvas.onclick = (e) => {
+    const mx = e.clientX + camera.x, my = e.clientY + camera.y;
+    objects.forEach(o => {
+        if(o.g >= 100 && Math.hypot(mx-(o.sx+45), my-(o.sy+10)) < 40) { money += 20; o.g = 0; updateUI(); }
+    });
+};
+</script>
+</body>
+</html>
